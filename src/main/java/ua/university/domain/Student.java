@@ -70,7 +70,12 @@ public class Student extends Person{
     @Override
     public String toString() {
         return "Student{" +
-                "studentId='" + studentId + '\'' +
+                "id=" + getId() +
+                ", fullName='" + getFullName() + '\'' +
+                ", birthDate='" + getBirthDate() + '\'' +
+                ", email='" + getEmail() + '\'' +
+                ", phoneNumber='" + getPhoneNumber() + '\'' +
+                ", studentId='" + studentId + '\'' +
                 ", course=" + course +
                 ", group='" + group + '\'' +
                 ", yearEnroll=" + yearEnroll +
