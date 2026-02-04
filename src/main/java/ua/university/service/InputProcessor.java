@@ -1,8 +1,16 @@
 package ua.university.service;
 
+import ua.university.repository.StudentRepository;
+
 public class InputProcessor {
 
-    public InputProcessor () {}
+    private CRUDOperations crudOperations;
+    private StudentRepository studentRepository;
+
+    public InputProcessor () {
+        this.crudOperations = new CRUDOperations();
+        this.studentRepository = new StudentRepository();
+    }
 
     /**
      * Defines the method to use for a command
@@ -135,6 +143,7 @@ public class InputProcessor {
                 break;
             case 13:
                 // Student table method
+                crudOperations.showStudents(studentRepository.getStudents());
                 break;
             case 14:
                 // Teacher table method
