@@ -1,5 +1,6 @@
 package ua.university;
-import ua.university.validations.InputValidator;
+import ua.university.service.InputProcessor;
+import ua.university.service.InputValidator;
 
 import java.util.Scanner;
 
@@ -10,6 +11,8 @@ public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     /** Adds input validator to the program */
     private static final InputValidator inputValidator = new InputValidator();
+    /** Adds input processor to the program */
+    private static final InputProcessor inputProcessor = new InputProcessor();
 
     /** Adds a list of access levels */
     private enum AccessLevel {user, manager, admin}
@@ -17,7 +20,7 @@ public class Main {
     private static AccessLevel accessLevel = AccessLevel.user;
 
     /** Defines if program is running (true by default) */
-    private static boolean programRunning = true;
+    protected static boolean programRunning = true;
 
     public static void main(String[] args) {
         while (programRunning) {
@@ -43,16 +46,22 @@ public class Main {
     private static void operateRequest(String lineStart, int access) {
         System.out.print(lineStart);
         String userInput = scanner.nextLine().trim().toLowerCase();
+
+        if (userInput.isEmpty()) {
+            System.out.println("Empty input");
+            return;
+        }
+
         String[] userTokens = userInput.split(" ");
 
-        // Catches the command if it is not listed
-        try {
-            for (int i = 0; i < userTokens.length; i++) {
-                if (!inputValidator.commandValidator(userTokens[i], access, i))
-                    throw new IllegalArgumentException("Command not found. Word number: " + (i+1));
+        int[] commandCode = inputValidator.commandValidator(userTokens);
+
+        for (int i=0; i<commandCode.length; i++) {
+            if (commandCode[i] == -1) {
+                System.out.println("Command was not found. Word number: " + (i+1));
             }
-        } catch(IllegalArgumentException e) {
-            System.out.println(e.getMessage());
         }
+
+        inputProcessor.defineProcess(commandCode, access);
     }
 }
