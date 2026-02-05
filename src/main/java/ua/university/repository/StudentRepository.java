@@ -10,7 +10,7 @@ public class StudentRepository {
     }
 
     public Student[] getStudents() {
-        return students;
+        return students.clone();
     }
 
     private void ExampleStudents() {
