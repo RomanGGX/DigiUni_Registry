@@ -4,6 +4,9 @@ import ua.university.repository.StudentRepository;
 
 public class InputProcessor {
 
+    /** Adds find operations to the class */
+    private final FindOperations findOperations = new FindOperations();
+
     private CRUDOperations crudOperations;
     private StudentRepository studentRepository;
 
@@ -53,7 +56,7 @@ public class InputProcessor {
                 findCommand(commandCode);
                 break;
             default:
-                System.out.println("Command undefined. Word: 1");
+                System.err.println("Command undefined. Word: 1");
                 break;
         }
     }
@@ -87,7 +90,7 @@ public class InputProcessor {
                 updateCommand(commandCode);
                 break;
             default:
-                System.out.println("Command undefined. Word: 1");
+                System.err.println("Command undefined. Word: 1");
                 break;
         }
     }
@@ -124,7 +127,7 @@ public class InputProcessor {
                 createCommand(commandCode);
                 break;
             default:
-                System.out.println("Command undefined. Word: 1");
+                System.err.println("Command undefined. Word: 1");
                 break;
         }
     }
@@ -152,7 +155,7 @@ public class InputProcessor {
                 // University table method
                 break;
             default:
-                System.out.println("Command undefined. Word: 2");
+                System.err.println("Command undefined. Word: 2");
         }
     }
 
@@ -170,7 +173,7 @@ public class InputProcessor {
 
     private void findCommand (int[] commandCode) {
         if (commandCode[1] == 16) findByCommand(commandCode);
-        else System.out.println("Command undefined. Word: 2");
+        else System.err.println("Command undefined. Word: 2");
     }
 
 /////////////////////////////////////////////////////////////////////
@@ -180,22 +183,22 @@ public class InputProcessor {
     private void findByCommand (int[] commandCode) {
         switch (commandCode[2]) {
             case 18:
-                // Student by full name method
+                findOperations.studentByFullName();
                 break;
             case 19:
-                // Student by course method
+                findOperations.studentByCourse();
                 break;
             case 20:
-                // Student by group method
+                findOperations.studentByGroup();
                 break;
             case 21:
-                // Student by student ID method
+                findOperations.studentByStudentID();
                 break;
             case 22:
-                // Student by email method
+                findOperations.studentByEmail();
                 break;
             default:
-                System.out.println("Command undefined. Word: 3");
+                System.err.println("Command undefined. Word: 3");
         }
     }
 
@@ -218,7 +221,7 @@ public class InputProcessor {
                 // Teacher add method
                 break;
             default:
-                System.out.println("Command undefined. Word: 2");
+                System.err.println("Command undefined. Word: 2");
         }
     }
 
@@ -237,7 +240,7 @@ public class InputProcessor {
                 // Teacher delete method
                 break;
             default:
-                System.out.println("Command undefined. Word: 2");
+                System.err.println("Command undefined. Word: 2");
         }
     }
 

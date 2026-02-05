@@ -54,11 +54,12 @@ public class Main {
 
         String[] userTokens = userInput.split(" ");
 
-        int[] commandCode = inputValidator.commandValidator(userTokens);
+        int[] commandCode = inputValidator.commandValidator(userTokens, userTokens.length);
 
         for (int i=0; i<commandCode.length; i++) {
             if (commandCode[i] == -1) {
-                System.out.println("Command was not found. Word number: " + (i+1));
+                System.err.println("Command was not found. Word number: " + (i+1));
+                return;
             }
         }
 
