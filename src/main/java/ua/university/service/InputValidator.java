@@ -40,6 +40,11 @@ public class InputValidator {
         return word;
     }
 
+    /**
+     * Returns "-1" if argument is not a group ID
+     * @param group String group ID to check
+     * @return String group ID or "-1"
+     */
     public String isGroup (String group) {
         if (group.length() != 3) return "-1";
         else if (!Character.isDigit(group.charAt(0))
@@ -48,6 +53,11 @@ public class InputValidator {
         return group;
     }
 
+    /**
+     * Returns "-1" if argument is not a student ID
+     * @param studentID String student ID to check
+     * @return String student ID or "-1"
+     */
     public String isStudentID (String studentID) {
         if (studentID.length() != 6) return "-1";
         for (int i=0; i<6; i++) {

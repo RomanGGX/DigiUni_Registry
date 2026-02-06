@@ -32,7 +32,7 @@ public class StudentRepository {
     /**
      * Checks if the student with the same full name is presented
      * @param names String array of first, middle and last names
-     * @return Optional student if finds, and optional empty if not
+     * @return Optional student if it finds, and optional empty if not
      */
     public Optional<Student> FindByFullName (String[] names) {
         for (Student student : students) {
@@ -45,6 +45,11 @@ public class StudentRepository {
         return Optional.empty();
     }
 
+    /**
+     * Makes a list of students of the same course
+     * @param course int course
+     * @return List of students by course
+     */
     public List<Student> FindByCourse (int course) {
         List<Student> result = new ArrayList<>();
 
@@ -54,6 +59,11 @@ public class StudentRepository {
         return result;
     }
 
+    /**
+     * Makes a list of students of the same group
+     * @param group String group
+     * @return List of students by group
+     */
     public List<Student> FindByGroup (String group) {
         List<Student> result = new ArrayList<>();
 
@@ -63,6 +73,11 @@ public class StudentRepository {
         return result;
     }
 
+    /**
+     * Checks if the student with the same student ID is presented
+     * @param studentID String student ID
+     * @return Optional student if it finds, and optional empty if not
+     */
     public Optional<Student> FindByStudentID (String studentID) {
         for (Student student : students) {
             if (studentID.equalsIgnoreCase(student.getStudentId())) return Optional.of(student);
@@ -70,6 +85,11 @@ public class StudentRepository {
         return Optional.empty();
     }
 
+    /**
+     * Checks if the student with the same email is presented
+     * @param email String email
+     * @return Optional student if it finds, and optional empty if not
+     */
     public Optional<Student> FindByEmail (String email) {
         for (Student student : students) {
             if (email.equalsIgnoreCase(student.getEmail())) return Optional.of(student);
