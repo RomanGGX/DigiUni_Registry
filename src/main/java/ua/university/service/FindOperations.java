@@ -37,7 +37,6 @@ public class FindOperations {
         }
 
         String[] resultTokens = result.trim().split(" ");
-        StudentRepository studentRepository = new StudentRepository();
 
         try {
             Student student = studentRepository.FindByFullName(resultTokens)
@@ -67,8 +66,6 @@ public class FindOperations {
             }
         } while (result < 1 || result > 6);
 
-        StudentRepository studentRepository = new StudentRepository();
-
         int counter = 0;
 
         for (Student student : studentRepository.FindByCourse(result)) {
@@ -95,8 +92,6 @@ public class FindOperations {
                 System.out.println("Wrong group. Example '12A'");
             }
         } while (userInput.equals("-1"));
-
-        StudentRepository studentRepository = new StudentRepository();
 
         int counter = 0;
 
@@ -125,8 +120,6 @@ public class FindOperations {
             }
         } while (userInput.equals("-1"));
 
-        StudentRepository studentRepository = new StudentRepository();
-
         try {
             Student student = studentRepository.FindByStudentID(userInput)
                     .orElseThrow(() -> new IllegalArgumentException("Student not found"));
@@ -144,8 +137,6 @@ public class FindOperations {
         System.out.print("Write student email: ");
 
         String userInput = scanner.next().trim();
-
-        StudentRepository studentRepository = new StudentRepository();
 
         try {
             Student student = studentRepository.FindByEmail(userInput)

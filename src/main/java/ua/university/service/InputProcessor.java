@@ -10,6 +10,8 @@ public class InputProcessor {
     private final CRUDOperations crudOperations;
     private final StudentRepository studentRepository;
 
+    private int[] commandCode;
+
     public InputProcessor(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
         this.crudOperations = new CRUDOperations(studentRepository);
@@ -22,15 +24,17 @@ public class InputProcessor {
      * @param accessLevel int access level
      */
     public void defineProcess (int[] commandCode, int accessLevel) {
+        this.commandCode = commandCode;
+
         switch (accessLevel) {
             case 0:
-                defineUserCommand(commandCode);
+                defineUserCommand();
                 break;
             case 1:
-                defineManagerCommand(commandCode);
+                defineManagerCommand();
                 break;
             case 2:
-                defineAdminCommand(commandCode);
+                defineAdminCommand();
                 break;
         }
     }
@@ -39,22 +43,22 @@ public class InputProcessor {
 ////                    FIRST LEVEL OF COMMAND                   ////
 /////////////////////////////////////////////////////////////////////
 
-    private void defineUserCommand (int[] commandCode) {
+    private void defineUserCommand () {
         switch (commandCode[0]) {
             case 1:
-                showCommand(commandCode);
+                showCommand();
                 break;
             case 2:
-                loginCommand(commandCode);
+                loginCommand();
                 break;
             case 3:
-                exitCommand(commandCode);
+                exitCommand();
                 break;
             case 4:
-                endCommand(commandCode);
+                endCommand();
                 break;
             case 5:
-                findCommand(commandCode);
+                findCommand();
                 break;
             default:
                 System.err.println("Command undefined. Word: 1");
@@ -62,33 +66,34 @@ public class InputProcessor {
         }
     }
 
-    private void defineManagerCommand (int[] commandCode) {
+    private void defineManagerCommand () {
         switch (commandCode[0]) {
             case 1:
-                showCommand(commandCode);
+                showCommand();
                 break;
             case 2:
-                loginCommand(commandCode);
+                loginCommand();
                 break;
             case 3:
-                exitCommand(commandCode);
+                exitCommand();
                 break;
             case 4:
-                endCommand(commandCode);
+                endCommand();
                 break;
             case 5:
-                findCommand(commandCode);
+                findCommand();
+                break;
             case 6:
-                addCommand(commandCode);
+                addCommand();
                 break;
             case 7:
-                deleteCommand(commandCode);
+                deleteCommand();
                 break;
             case 8:
-                moveCommand(commandCode);
+                moveCommand();
                 break;
             case 9:
-                updateCommand(commandCode);
+                updateCommand();
                 break;
             default:
                 System.err.println("Command undefined. Word: 1");
@@ -96,36 +101,37 @@ public class InputProcessor {
         }
     }
 
-    private void defineAdminCommand (int[] commandCode) {
+    private void defineAdminCommand () {
         switch (commandCode[0]) {
             case 1:
-                showCommand(commandCode);
+                showCommand();
                 break;
             case 2:
-                loginCommand(commandCode);
+                loginCommand();
                 break;
             case 3:
-                exitCommand(commandCode);
+                exitCommand();
                 break;
             case 4:
-                endCommand(commandCode);
+                endCommand();
                 break;
             case 5:
-                findCommand(commandCode);
+                findCommand();
+                break;
             case 6:
-                addCommand(commandCode);
+                addCommand();
                 break;
             case 7:
-                deleteCommand(commandCode);
+                deleteCommand();
                 break;
             case 8:
-                moveCommand(commandCode);
+                moveCommand();
                 break;
             case 9:
-                updateCommand(commandCode);
+                updateCommand();
                 break;
             case 10:
-                createCommand(commandCode);
+                createCommand();
                 break;
             default:
                 System.err.println("Command undefined. Word: 1");
@@ -137,7 +143,7 @@ public class InputProcessor {
 ////               SECOND LEVEL OF USER COMMAND                  ////
 /////////////////////////////////////////////////////////////////////
 
-    private void showCommand (int[] commandCode) {
+    private void showCommand () {
         switch (commandCode[1]) {
             case 11:
                 // Department table method
@@ -160,20 +166,20 @@ public class InputProcessor {
         }
     }
 
-    private void loginCommand (int[] commandCode) {
+    private void loginCommand () {
         // Login method (unused for now)
     }
 
-    private void exitCommand (int[] commandCode) {
+    private void exitCommand () {
         // Exit from the account method (unused for now)
     }
 
-    private void endCommand (int[] commandCode) {
+    private void endCommand () {
         // Program end method
     }
 
-    private void findCommand (int[] commandCode) {
-        if (commandCode[1] == 16) findByCommand(commandCode);
+    private void findCommand () {
+        if (commandCode[1] == 16) findByCommand();
         else System.err.println("Command undefined. Word: 2");
     }
 
@@ -181,7 +187,7 @@ public class InputProcessor {
 ////               THIRD LEVEL OF USER COMMAND                   ////
 /////////////////////////////////////////////////////////////////////
 
-    private void findByCommand (int[] commandCode) {
+    private void findByCommand () {
         switch (commandCode[2]) {
             case 18:
                 findOperations.studentByFullName();
@@ -207,7 +213,7 @@ public class InputProcessor {
 ////                SECOND LEVEL OF MANAGER COMMAND              ////
 /////////////////////////////////////////////////////////////////////
 
-    private void addCommand (int[] commandCode) {
+    private void addCommand () {
         switch (commandCode[1]) {
             case 11:
                 // Department add method
@@ -227,7 +233,7 @@ public class InputProcessor {
         }
     }
 
-    private void deleteCommand (int[] commandCode) {
+    private void deleteCommand () {
         switch (commandCode[1]) {
             case 11:
                 // Department delete method
@@ -247,11 +253,11 @@ public class InputProcessor {
         }
     }
 
-    private void moveCommand (int[] commandCode) {
+    private void moveCommand () {
         // Student move method
     }
 
-    private void updateCommand (int[] commandCode) {
+    private void updateCommand () {
         switch (commandCode[1]) {
             case 11:
                 // Department update method
@@ -275,7 +281,7 @@ public class InputProcessor {
 ////               SECOND LEVEL OF ADMIN COMMAND                 ////
 /////////////////////////////////////////////////////////////////////
 
-    private void createCommand (int[] commandCode) {
+    private void createCommand () {
         // Login create method
     }
 }
