@@ -96,4 +96,98 @@ public class StudentRepository {
         }
         return Optional.empty();
     }
+
+    /**
+     * Adds a new student to the repository.
+     * Creates a new array with increased size and appends the student to the end.
+     * @param student the student to be added
+     */
+    public void addStudent(Student student) {
+        Student[] newArray = new Student[students.length + 1];
+
+        for (int i = 0; i < students.length; i++) {
+            newArray[i] = students[i];
+        }
+
+        newArray[students.length] = student;
+
+        students = newArray;
+    }
+
+    /**
+     * Deletes a student from the repository by their ID.
+     * @param id the unique identifier of the student
+     * @return true if student was found and deleted, false otherwise
+     */
+    public boolean deleteStudentById(int id) {
+        boolean found = false;
+        for (Student student : students) {
+            if (student.getId() == id) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            return false;
+        }
+
+        Student[] newArray = new Student[students.length - 1];
+
+        int newIndex = 0;
+        for (int i = 0; i < students.length; i++) {
+            if (students[i].getId() != id) {
+                newArray[newIndex] = students[i];
+                newIndex++;
+            }
+        }
+
+        students = newArray;
+        return true;
+    }
+
+    /**
+     * Deletes a student from the repository by their full name.
+     * @param names String array of first, middle and last names
+     * @return true if student was found and deleted, false otherwise
+     */
+    public boolean deleteStudentByFullName(String[] names) {
+        Optional<Student> studentOpt = this.FindByFullName(names);
+
+        if (studentOpt.isPresent()) {
+            return deleteStudentById(studentOpt.get().getId());
+        }
+        return false;
+    }
+
+    /**
+     * Updates an existing student's information in the repository.
+     * @param id the unique identifier of the student to update
+     * @param updatedStudent the student object with new information
+     * @return true if student was found and updated, false otherwise
+     */
+    public boolean updateStudent(int id, Student updatedStudent) {
+        for (int i = 0; i < students.length; i++) {
+            if (students[i].getId() == id) {
+                students[i] = updatedStudent;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Generates the next available ID for a new student.
+     * Finds the maximum ID in the repository and returns it incremented by 1.
+     * @return the next available student ID
+     */
+    public int getNextId() {
+        int maxId = 0;
+        for (Student student : students) {
+            if (student.getId() > maxId) {
+                maxId = student.getId();
+            }
+        }
+        return maxId + 1;
+    }
 }
