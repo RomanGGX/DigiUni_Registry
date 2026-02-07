@@ -5,14 +5,15 @@ import ua.university.repository.StudentRepository;
 public class InputProcessor {
 
     /** Adds find operations to the class */
-    private final FindOperations findOperations = new FindOperations();
+    private final FindOperations findOperations;
 
-    private CRUDOperations crudOperations;
-    private StudentRepository studentRepository;
+    private final CRUDOperations crudOperations;
+    private final StudentRepository studentRepository;
 
-    public InputProcessor () {
-        this.crudOperations = new CRUDOperations();
-        this.studentRepository = new StudentRepository();
+    public InputProcessor(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+        this.crudOperations = new CRUDOperations(studentRepository);
+        this.findOperations = new FindOperations(studentRepository);
     }
 
     /**
@@ -216,6 +217,7 @@ public class InputProcessor {
                 break;
             case 13:
                 // Student add method
+                crudOperations.addStudent();
                 break;
             case 14:
                 // Teacher add method
@@ -235,6 +237,7 @@ public class InputProcessor {
                 break;
             case 13:
                 // Student delete method
+                crudOperations.deleteStudent();
                 break;
             case 14:
                 // Teacher delete method
@@ -249,7 +252,23 @@ public class InputProcessor {
     }
 
     private void updateCommand (int[] commandCode) {
-        // Data update method
+        switch (commandCode[1]) {
+            case 11:
+                // Department update method
+                break;
+            case 12:
+                // Faculty update method
+                break;
+            case 13:
+                // Student update method
+                crudOperations.updateStudent();
+                break;
+            case 14:
+                // Teacher update method
+                break;
+            default:
+                System.err.println("Command undefined. Word: 2");
+        }
     }
 
 /////////////////////////////////////////////////////////////////////
