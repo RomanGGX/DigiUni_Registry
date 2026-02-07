@@ -10,8 +10,11 @@ public class FindOperations {
     private final InputValidator inputValidator = new InputValidator();
     /** Adds scanner to the class */
     private final Scanner scanner = new Scanner(System.in);
+    private final StudentRepository studentRepository;
 
-    public FindOperations () {}
+    public FindOperations (StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
 
     /**
      * Finds student by their full name
