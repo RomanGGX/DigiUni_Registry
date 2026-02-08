@@ -23,35 +23,42 @@ public class InputProcessor {
 
     /** Defines what to interact with */
     public void defineObject () {
-        switch (parseRequest("""
-                
-                Оберіть, з чим працювати:
-                1 - університет
-                2 - факультети
-                3 - кафедри
-                4 - студенти
-                5 - викладачі
-                6 - пошук студентів
-                7 - вихід
-                """, 7)) {
-            case 1:
-                processUniversity();
-                break;
-            case 2:
-                processFaculty();
-                break;
-            case 3:
-                processDepartment();
-                break;
-            case 4:
-                processStudent();
-                break;
-            case 5:
-                processTeacher();
-                break;
-            case 6:
-                processFind();
-                break;
+        boolean running = true;
+
+        while (running) {
+            switch (parseRequest("""
+                    
+                    Оберіть, з чим працювати:
+                    1 - університет
+                    2 - факультети
+                    3 - кафедри
+                    4 - студенти
+                    5 - викладачі
+                    6 - пошук студентів
+                    7 - вихід
+                    """, 7)) {
+                case 1:
+                    processUniversity();
+                    break;
+                case 2:
+                    processFaculty();
+                    break;
+                case 3:
+                    processDepartment();
+                    break;
+                case 4:
+                    processStudent();
+                    break;
+                case 5:
+                    processTeacher();
+                    break;
+                case 6:
+                    processFind();
+                    break;
+                case 7:
+                    running = false;
+                    break;
+            }
         }
     }
 
@@ -63,8 +70,6 @@ public class InputProcessor {
                 1 - інформація про заклад
                 2 - повернутися
                 """, 2) == 1) ; // University toString method
-
-        defineObject();
     }
 
     /** interacts with faculties */
@@ -91,8 +96,6 @@ public class InputProcessor {
                 // Faculty redact method
                 break;
         }
-
-        defineObject();
     }
 
     /** Interacts with departments */
@@ -119,8 +122,6 @@ public class InputProcessor {
                 // Department redact method
                 break;
         }
-
-        defineObject();
     }
 
     /** Interacts with students */
@@ -155,8 +156,6 @@ public class InputProcessor {
                 // Student change course method
                 break;
         }
-
-        defineObject();
     }
 
     /** Interacts with teachers */
@@ -183,8 +182,6 @@ public class InputProcessor {
                 // Teacher redact method
                 break;
         }
-
-        defineObject();
     }
 
     /** Interacts with find operations */
@@ -215,8 +212,6 @@ public class InputProcessor {
                 findOperations.studentByEmail();
                 break;
         }
-
-        defineObject();
     }
 
 /////////////////////////////////////////////////////////////////////
