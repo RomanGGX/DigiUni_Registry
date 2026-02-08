@@ -2,15 +2,18 @@ package ua.university.service;
 
 import ua.university.repository.StudentRepository;
 
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
 public class InputProcessor {
 
     /** Adds find operations to the class */
     private final FindOperations findOperations;
+    /** Adds input scanner to the class */
+    private Scanner scanner = new Scanner(System.in);
 
     private final CRUDOperations crudOperations;
     private final StudentRepository studentRepository;
-
-    private int[] commandCode;
 
     public InputProcessor(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
@@ -18,270 +21,222 @@ public class InputProcessor {
         this.findOperations = new FindOperations(studentRepository);
     }
 
-    /**
-     * Defines the method to use for a command
-     * @param commandCode int array code of a command
-     * @param accessLevel int access level
-     */
-    public void defineProcess (int[] commandCode, int accessLevel) {
-        this.commandCode = commandCode;
-
-        switch (accessLevel) {
-            case 0:
-                defineUserCommand();
-                break;
+    public void defineObject () {
+        switch (parseRequest("""
+                
+                Оберіть, з чим працювати:
+                1 - університет
+                2 - факультети
+                3 - кафедри
+                4 - студенти
+                5 - викладачі
+                6 - пошук студентів
+                7 - вихід
+                """, 7)) {
             case 1:
-                defineManagerCommand();
+                processUniversity();
                 break;
             case 2:
-                defineAdminCommand();
-                break;
-        }
-    }
-
-/////////////////////////////////////////////////////////////////////
-////                    FIRST LEVEL OF COMMAND                   ////
-/////////////////////////////////////////////////////////////////////
-
-    private void defineUserCommand () {
-        switch (commandCode[0]) {
-            case 1:
-                showCommand();
-                break;
-            case 2:
-                loginCommand();
+                processFaculty();
                 break;
             case 3:
-                exitCommand();
+                processDepartment();
                 break;
             case 4:
-                endCommand();
+                processStudent();
                 break;
             case 5:
-                findCommand();
-                break;
-            default:
-                System.err.println("Command undefined. Word: 1");
-                break;
-        }
-    }
-
-    private void defineManagerCommand () {
-        switch (commandCode[0]) {
-            case 1:
-                showCommand();
-                break;
-            case 2:
-                loginCommand();
-                break;
-            case 3:
-                exitCommand();
-                break;
-            case 4:
-                endCommand();
-                break;
-            case 5:
-                findCommand();
+                processTeacher();
                 break;
             case 6:
-                addCommand();
-                break;
-            case 7:
-                deleteCommand();
-                break;
-            case 8:
-                moveCommand();
-                break;
-            case 9:
-                updateCommand();
-                break;
-            default:
-                System.err.println("Command undefined. Word: 1");
+                processFind();
                 break;
         }
     }
 
-    private void defineAdminCommand () {
-        switch (commandCode[0]) {
+    private void processUniversity() {
+        if  (parseRequest("""
+                
+                Оберіть дію:
+                1 - інформація про заклад
+                2 - повернутися
+                """, 2) == 1) ; // University toString method
+
+        defineObject();
+    }
+
+    private void processFaculty() {
+        switch (parseRequest("""
+                
+                Оберіть дію:
+                1 - інформація про факультети
+                2 - створити факультет
+                3 - видалити факультет
+                4 - редагувати факультет
+                5 - повернутися
+                """, 5)) {
             case 1:
-                showCommand();
-                break;
-            case 2:
-                loginCommand();
-                break;
-            case 3:
-                exitCommand();
-                break;
-            case 4:
-                endCommand();
-                break;
-            case 5:
-                findCommand();
-                break;
-            case 6:
-                addCommand();
-                break;
-            case 7:
-                deleteCommand();
-                break;
-            case 8:
-                moveCommand();
-                break;
-            case 9:
-                updateCommand();
-                break;
-            case 10:
-                createCommand();
-                break;
-            default:
-                System.err.println("Command undefined. Word: 1");
-                break;
-        }
-    }
-
-/////////////////////////////////////////////////////////////////////
-////               SECOND LEVEL OF USER COMMAND                  ////
-/////////////////////////////////////////////////////////////////////
-
-    private void showCommand () {
-        switch (commandCode[1]) {
-            case 11:
-                // Department table method
-                break;
-            case 12:
                 // Faculty table method
                 break;
-            case 13:
-                // Student table method
-                crudOperations.showStudents(studentRepository.getStudents());
-                break;
-            case 14:
-                // Teacher table method
-                break;
-            case 15:
-                // University table method
-                break;
-            default:
-                System.err.println("Command undefined. Word: 2");
-        }
-    }
-
-    private void loginCommand () {
-        // Login method (unused for now)
-    }
-
-    private void exitCommand () {
-        // Exit from the account method (unused for now)
-    }
-
-    private void endCommand () {
-        // Program end method
-    }
-
-    private void findCommand () {
-        if (commandCode[1] == 16) findByCommand();
-        else System.err.println("Command undefined. Word: 2");
-    }
-
-/////////////////////////////////////////////////////////////////////
-////               THIRD LEVEL OF USER COMMAND                   ////
-/////////////////////////////////////////////////////////////////////
-
-    private void findByCommand () {
-        switch (commandCode[2]) {
-            case 18:
-                findOperations.studentByFullName();
-                break;
-            case 19:
-                findOperations.studentByCourse();
-                break;
-            case 20:
-                findOperations.studentByGroup();
-                break;
-            case 21:
-                findOperations.studentByStudentID();
-                break;
-            case 22:
-                findOperations.studentByEmail();
-                break;
-            default:
-                System.err.println("Command undefined. Word: 3");
-        }
-    }
-
-/////////////////////////////////////////////////////////////////////
-////                SECOND LEVEL OF MANAGER COMMAND              ////
-/////////////////////////////////////////////////////////////////////
-
-    private void addCommand () {
-        switch (commandCode[1]) {
-            case 11:
-                // Department add method
-                break;
-            case 12:
+            case 2:
                 // Faculty add method
                 break;
-            case 13:
-                // Student add method
-                crudOperations.addStudent();
-                break;
-            case 14:
-                // Teacher add method
-                break;
-            default:
-                System.err.println("Command undefined. Word: 2");
-        }
-    }
-
-    private void deleteCommand () {
-        switch (commandCode[1]) {
-            case 11:
-                // Department delete method
-                break;
-            case 12:
+            case 3:
                 // Faculty delete method
                 break;
-            case 13:
-                // Student delete method
+            case 4:
+                // Faculty redact method
+                break;
+        }
+
+        defineObject();
+    }
+
+    private void processDepartment() {
+        switch (parseRequest("""
+                
+                Оберіть дію:
+                1 - інформація про кафедри
+                2 - створити кафедру
+                3 - видалити кафедру
+                4 - редагувати кафедру
+                5 - повернутися
+                """, 5)) {
+            case 1:
+                // Department table method
+                break;
+            case 2:
+                // Department add method
+                break;
+            case 3:
+                // Department delete method
+                break;
+            case 4:
+                // Department redact method
+                break;
+        }
+
+        defineObject();
+    }
+
+    private void processStudent() {
+        switch (parseRequest("""
+                
+                Оберіть дію:
+                1 - інформація про студентів
+                2 - створити студента
+                3 - видалити студента
+                4 - редагувати студента
+                5 - перевести студента
+                6 - змінити курс студента
+                7 - повернутися
+                """, 7)) {
+            case 1:
+                crudOperations.showStudents(studentRepository.getStudents());
+                break;
+            case 2:
+                crudOperations.addStudent();
+                break;
+            case 3:
                 crudOperations.deleteStudent();
                 break;
-            case 14:
-                // Teacher delete method
-                break;
-            default:
-                System.err.println("Command undefined. Word: 2");
-        }
-    }
-
-    private void moveCommand () {
-        // Student move method
-    }
-
-    private void updateCommand () {
-        switch (commandCode[1]) {
-            case 11:
-                // Department update method
-                break;
-            case 12:
-                // Faculty update method
-                break;
-            case 13:
-                // Student update method
+            case 4:
                 crudOperations.updateStudent();
                 break;
-            case 14:
-                // Teacher update method
+            case 5:
+                // Student move method
                 break;
-            default:
-                System.err.println("Command undefined. Word: 2");
+            case 6:
+                // Student change course method
+                break;
         }
+
+        defineObject();
+    }
+
+    private void processTeacher() {
+        switch (parseRequest("""
+                
+                Оберіть дію:
+                1 - інформація про викладачів
+                2 - створити викладача
+                3 - видалити викладача
+                4 - редагувати викладача
+                5 - повернутися
+                """, 5)) {
+            case 1:
+                // Teacher table method
+                break;
+            case 2:
+                // Teacher add method
+                break;
+            case 3:
+                // Teacher delete method
+                break;
+            case 4:
+                // Teacher redact method
+                break;
+        }
+
+        defineObject();
+    }
+
+    private void processFind() {
+        switch (parseRequest("""
+                
+                Оберіть параметр для пошуку:
+                1 - повне ім'я
+                2 - курс
+                3 - група
+                4 - id студента
+                5 - електронна пошта
+                6 - повернутися
+                """, 6)) {
+            case 1:
+                findOperations.studentByFullName();
+                break;
+            case 2:
+                findOperations.studentByCourse();
+                break;
+            case 3:
+                findOperations.studentByGroup();
+                break;
+            case 4:
+                findOperations.studentByStudentID();
+                break;
+            case 5:
+                findOperations.studentByEmail();
+                break;
+        }
+
+        defineObject();
     }
 
 /////////////////////////////////////////////////////////////////////
-////               SECOND LEVEL OF ADMIN COMMAND                 ////
+////                       INT PARSE SYSTEM                      ////
 /////////////////////////////////////////////////////////////////////
 
-    private void createCommand () {
-        // Login create method
+    private int parseRequest (String commandText, int optionsNumber) {
+        System.out.println(commandText);
+        int result = 0;
+        boolean resultApproved = false;
+
+        do {
+            try {
+                String stringResult = scanner.nextLine();
+
+                if (stringResult.isEmpty()) throw new InputMismatchException();
+                else result = Integer.parseInt(stringResult);
+
+                if (result < 1 || result > optionsNumber) throw new IllegalArgumentException();
+                resultApproved = true;
+            } catch (IllegalArgumentException ex) {
+                System.out.println("Введіть коректне значення (1-" + optionsNumber + ")");
+            } catch (InputMismatchException ex) {
+                System.out.println("Порожнє введення");
+            }
+        } while (!resultApproved);
+
+        return result;
     }
 }

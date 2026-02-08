@@ -8,27 +8,6 @@ public class InputValidator {
     public InputValidator () {}
 
     /**
-     * Turns command into int array code and returns -1 if the command does not exist
-     * @param userTokens String array if user input line tokens
-     * @param tokensNumber int length of the int array
-     * @return int array of a command
-     */
-    public int[] commandValidator (String[] userTokens, int tokensNumber) {
-        int[] commandCode = new int[tokensNumber+1];
-
-        for (int i=0; i<userTokens.length; i++){
-            try {
-                commandCode[i] = CommandList.valueOf(userTokens[i]).getEnumID();
-            } catch (IllegalArgumentException e) {
-                commandCode[i] = -1;
-                return commandCode;
-            }
-        }
-
-        return commandCode;
-    }
-
-    /**
      * Returns "-1" if argument is not a word
      * @param word String word to check
      * @return String word or "-1"
