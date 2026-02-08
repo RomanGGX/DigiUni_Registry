@@ -117,28 +117,28 @@ public class CRUDOperations {
         do {
             System.out.print("Enter first name: ");
             firstName = scanner.next().trim();
-            if (inputValidator.isWord(firstName).equals("-1")) {
+            if (inputValidator.checkWord(firstName).equals("-1")) {
                 System.out.println("Invalid name. Please use only letters.");
             }
-        } while (inputValidator.isWord(firstName).equals("-1"));
+        } while (inputValidator.checkWord(firstName).equals("-1"));
 
         String middleName = "";
         do {
             System.out.print("Enter middle name: ");
             middleName = scanner.next().trim();
-            if (inputValidator.isWord(middleName).equals("-1")) {
+            if (inputValidator.checkWord(middleName).equals("-1")) {
                 System.out.println("Invalid name. Please use only letters.");
             }
-        } while (inputValidator.isWord(middleName).equals("-1"));
+        } while (inputValidator.checkWord(middleName).equals("-1"));
 
         String lastName = "";
         do {
             System.out.print("Enter last name: ");
             lastName = scanner.next().trim();
-            if (inputValidator.isWord(lastName).equals("-1")) {
+            if (inputValidator.checkWord(lastName).equals("-1")) {
                 System.out.println("Invalid name. Please use only letters.");
             }
-        } while (inputValidator.isWord(lastName).equals("-1"));
+        } while (inputValidator.checkWord(lastName).equals("-1"));
 
         System.out.print("Enter birth date (DD.MM.YYYY): ");
         String birthDate = scanner.next().trim();
@@ -153,7 +153,7 @@ public class CRUDOperations {
         do {
             System.out.print("Enter student ID (6 characters, e.g., 4BI92H): ");
             studentID = scanner.next().trim();
-            studentID = inputValidator.isStudentID(studentID);
+            studentID = inputValidator.checkStudentID(studentID);
             if (studentID.equals("-1")) {
                 System.out.println("Invalid student ID format. Example: '4BI92H'");
             }
@@ -176,7 +176,7 @@ public class CRUDOperations {
         do {
             System.out.print("Enter group (e.g., 12A): ");
             group = scanner.next().trim();
-            group = inputValidator.isGroup(group);
+            group = inputValidator.checkGroup(group);
             if (group.equals("-1")) {
                 System.out.println("Invalid group format. Example: '12A'");
             }
@@ -258,26 +258,26 @@ public class CRUDOperations {
                 do {
                     System.out.print("Enter first name: ");
                     firstName = scanner.next().trim();
-                    if (inputValidator.isWord(firstName).equals("-1")) {
+                    if (inputValidator.checkWord(firstName).equals("-1")) {
                         System.out.println("Invalid name. Please use only letters.");
                     }
-                } while (inputValidator.isWord(firstName).equals("-1"));
+                } while (inputValidator.checkWord(firstName).equals("-1"));
 
                 do {
                     System.out.print("Enter middle name: ");
                     middleName = scanner.next().trim();
-                    if (inputValidator.isWord(middleName).equals("-1")) {
+                    if (inputValidator.checkWord(middleName).equals("-1")) {
                         System.out.println("Invalid name. Please use only letters.");
                     }
-                } while (inputValidator.isWord(middleName).equals("-1"));
+                } while (inputValidator.checkWord(middleName).equals("-1"));
 
                 do {
                     System.out.print("Enter last name: ");
                     lastName = scanner.next().trim();
-                    if (inputValidator.isWord(lastName).equals("-1")) {
+                    if (inputValidator.checkWord(lastName).equals("-1")) {
                         System.out.println("Invalid name. Please use only letters.");
                     }
-                } while (inputValidator.isWord(lastName).equals("-1"));
+                } while (inputValidator.checkWord(lastName).equals("-1"));
 
                 String[] fullName = {firstName, middleName, lastName};
                 deleted = this.studentRepository.deleteStudentByFullName(fullName);
@@ -352,26 +352,26 @@ public class CRUDOperations {
                 do {
                     System.out.print("Enter first name: ");
                     firstName = scanner.next().trim();
-                    if (inputValidator.isWord(firstName).equals("-1")) {
+                    if (inputValidator.checkWord(firstName).equals("-1")) {
                         System.out.println("Invalid name. Please use only letters.");
                     }
-                } while (inputValidator.isWord(firstName).equals("-1"));
+                } while (inputValidator.checkWord(firstName).equals("-1"));
 
                 do {
                     System.out.print("Enter middle name: ");
                     middleName = scanner.next().trim();
-                    if (inputValidator.isWord(middleName).equals("-1")) {
+                    if (inputValidator.checkWord(middleName).equals("-1")) {
                         System.out.println("Invalid name. Please use only letters.");
                     }
-                } while (inputValidator.isWord(middleName).equals("-1"));
+                } while (inputValidator.checkWord(middleName).equals("-1"));
 
                 do {
                     System.out.print("Enter last name: ");
                     lastName = scanner.next().trim();
-                    if (inputValidator.isWord(lastName).equals("-1")) {
+                    if (inputValidator.checkWord(lastName).equals("-1")) {
                         System.out.println("Invalid name. Please use only letters.");
                     }
-                } while (inputValidator.isWord(lastName).equals("-1"));
+                } while (inputValidator.checkWord(lastName).equals("-1"));
 
                 String[] fullName = {firstName, middleName, lastName};
                 java.util.Optional<Student> studentOpt = this.studentRepository.FindByFullName(fullName);
@@ -404,10 +404,10 @@ public class CRUDOperations {
                 break;
             }
 
-            if (inputValidator.isWord(newFirstName).equals("-1")) {
+            if (inputValidator.checkWord(newFirstName).equals("-1")) {
                 System.out.println("Invalid name. Please use only letters or 's' to keep current.");
             }
-        } while (inputValidator.isWord(newFirstName).equals("-1"));
+        } while (inputValidator.checkWord(newFirstName).equals("-1"));
 
         String newMiddleName = "";
         do {
@@ -419,10 +419,10 @@ public class CRUDOperations {
                 break;
             }
 
-            if (inputValidator.isWord(newMiddleName).equals("-1")) {
+            if (inputValidator.checkWord(newMiddleName).equals("-1")) {
                 System.out.println("Invalid name. Please use only letters or 's' to keep current.");
             }
-        } while (inputValidator.isWord(newMiddleName).equals("-1"));
+        } while (inputValidator.checkWord(newMiddleName).equals("-1"));
 
         String newLastName = "";
         do {
@@ -434,10 +434,10 @@ public class CRUDOperations {
                 break;
             }
 
-            if (inputValidator.isWord(newLastName).equals("-1")) {
+            if (inputValidator.checkWord(newLastName).equals("-1")) {
                 System.out.println("Invalid name. Please use only letters or 's' to keep current.");
             }
-        } while (inputValidator.isWord(newLastName).equals("-1"));
+        } while (inputValidator.checkWord(newLastName).equals("-1"));
 
         System.out.print("Enter birth date [" + currentStudent.getBirthDate() + "] (DD.MM.YYYY): ");
         String newBirthDate = scanner.next().trim();
@@ -467,7 +467,7 @@ public class CRUDOperations {
                 break;
             }
 
-            newStudentID = inputValidator.isStudentID(newStudentID);
+            newStudentID = inputValidator.checkStudentID(newStudentID);
             if (newStudentID.equals("-1")) {
                 System.out.println("Invalid student ID format. Example: '4BI92H' or 's' to keep current.");
             }
@@ -506,7 +506,7 @@ public class CRUDOperations {
                 break;
             }
 
-            newGroup = inputValidator.isGroup(newGroup);
+            newGroup = inputValidator.checkGroup(newGroup);
             if (newGroup.equals("-1")) {
                 System.out.println("Invalid group format. Example: '12A' or 's' to keep current.");
             }

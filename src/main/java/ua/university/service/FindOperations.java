@@ -20,18 +20,18 @@ public class FindOperations {
      * Finds student by their full name
      */
     public void  studentByFullName () {
-        String[] names = { "first", "middle", "last" };
-        String userInput = "";
+        String[] names = { "ім'я", "по батькові", "прізвище" };
+        String userInput;
         String result = "";
 
         for (int i=0; i<3; i++) {
             do {
-                System.out.print("Write the " + names[i] + " name: ");
+                System.out.print("Введіть " + names[i] + ": ");
 
-                userInput = scanner.next().trim();
+                userInput = scanner.nextLine().trim();
 
-                if (inputValidator.isWord(userInput).equals("-1")) System.out.println("Not a word");
-            } while (inputValidator.isWord(userInput).equals("-1"));
+                if (inputValidator.checkWord(userInput).equals("-1")) System.out.println("Ввід не є словом");
+            } while (inputValidator.checkWord(userInput).equals("-1"));
 
             result += (userInput + " ");
         }
@@ -40,7 +40,7 @@ public class FindOperations {
 
         try {
             Student student = studentRepository.FindByFullName(resultTokens)
-                    .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+                    .orElseThrow(() -> new IllegalArgumentException("Студента не знайдено"));
 
             System.out.println(student);
         } catch (IllegalArgumentException e) {
@@ -56,13 +56,13 @@ public class FindOperations {
 
         do {
             try {
-                System.out.print("Write the number of the course: ");
+                System.out.print("Введіть номер курсу: ");
 
-                result = Integer.parseInt(scanner.next().trim());
+                result = Integer.parseInt(scanner.nextLine().trim());
 
                 if (result < 1 || result > 6) throw new IllegalArgumentException();
             } catch (IllegalArgumentException e) {
-                System.out.println("Write a natural number from 1 to 6");
+                System.out.println("Введіть натуральне число від 1 до 6");
             }
         } while (result < 1 || result > 6);
 
@@ -73,23 +73,23 @@ public class FindOperations {
             counter++;
         }
 
-        if (counter == 0) System.err.println("Students not found");
+        if (counter == 0) System.err.println("Студента не знайдено");
     }
 
     /**
      * Finds students by their group
      */
     public void studentByGroup () {
-        String userInput = "";
+        String userInput;
 
         do {
-            System.out.print("Write student's group: ");
+            System.out.print("Введіть номер групи: ");
 
-            userInput = scanner.next().trim();
-            userInput = inputValidator.isGroup(userInput);
+            userInput = scanner.nextLine().trim();
+            userInput = inputValidator.checkGroup(userInput);
 
             if (userInput.equals("-1")) {
-                System.out.println("Wrong group. Example '12A'");
+                System.out.println("Неправильний запис. Приклад '12A'");
             }
         } while (userInput.equals("-1"));
 
@@ -100,29 +100,29 @@ public class FindOperations {
             counter++;
         }
 
-        if (counter == 0) System.err.println("Students not found");
+        if (counter == 0) System.err.println("Студента не знайдено");
     }
 
     /**
      * Finds student by their student ID
      */
     public void studentByStudentID () {
-        String userInput = "";
+        String userInput;
 
         do {
-            System.out.print("Write student ID: ");
+            System.out.print("Введіть ID студента: ");
 
-            userInput = scanner.next().trim();
-            userInput = inputValidator.isStudentID(userInput);
+            userInput = scanner.nextLine().trim();
+            userInput = inputValidator.checkStudentID(userInput);
 
             if (userInput.equals("-1")) {
-                System.out.println("Wrong ID. Example '4BI92H'");
+                System.out.println("Неправильний запис. Приклад '4BI92H'");
             }
         } while (userInput.equals("-1"));
 
         try {
             Student student = studentRepository.FindByStudentID(userInput)
-                    .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+                    .orElseThrow(() -> new IllegalArgumentException("Студента не знайдено"));
 
             System.out.println(student);
         } catch (IllegalArgumentException e) {
@@ -134,13 +134,23 @@ public class FindOperations {
      * Finds student by their email
      */
     public void studentByEmail () {
-        System.out.print("Write student email: ");
 
-        String userInput = scanner.next().trim();
+        String userInput;
+
+        do {
+            System.out.print("Введіть email: ");
+
+            userInput = scanner.nextLine().trim();
+            userInput = inputValidator.checkEmail(userInput);
+
+            if (userInput.equals("-1")) {
+                System.out.println("Неправильний запис. Приклад 'example@gmail.com'");
+            }
+        } while (userInput.equals("-1"));
 
         try {
             Student student = studentRepository.FindByEmail(userInput)
-                    .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+                    .orElseThrow(() -> new IllegalArgumentException("Студента не знайдено"));
 
             System.out.println(student);
         } catch (IllegalArgumentException e) {
