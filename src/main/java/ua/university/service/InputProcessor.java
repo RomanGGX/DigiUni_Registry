@@ -10,7 +10,7 @@ public class InputProcessor {
     /** Adds find operations to the class */
     private final FindOperations findOperations;
     /** Adds input scanner to the class */
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
 
     private final CRUDOperations crudOperations;
     private final StudentRepository studentRepository;
@@ -21,6 +21,7 @@ public class InputProcessor {
         this.findOperations = new FindOperations(studentRepository);
     }
 
+    /** Defines what to interact with */
     public void defineObject () {
         switch (parseRequest("""
                 
@@ -54,6 +55,7 @@ public class InputProcessor {
         }
     }
 
+    /** Interacts with university */
     private void processUniversity() {
         if  (parseRequest("""
                 
@@ -65,6 +67,7 @@ public class InputProcessor {
         defineObject();
     }
 
+    /** interacts with faculties */
     private void processFaculty() {
         switch (parseRequest("""
                 
@@ -92,6 +95,7 @@ public class InputProcessor {
         defineObject();
     }
 
+    /** Interacts with departments */
     private void processDepartment() {
         switch (parseRequest("""
                 
@@ -119,6 +123,7 @@ public class InputProcessor {
         defineObject();
     }
 
+    /** Interacts with students */
     private void processStudent() {
         switch (parseRequest("""
                 
@@ -154,6 +159,7 @@ public class InputProcessor {
         defineObject();
     }
 
+    /** Interacts with teachers */
     private void processTeacher() {
         switch (parseRequest("""
                 
@@ -181,6 +187,7 @@ public class InputProcessor {
         defineObject();
     }
 
+    /** Interacts with find operations */
     private void processFind() {
         switch (parseRequest("""
                 
