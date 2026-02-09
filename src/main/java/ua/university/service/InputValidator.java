@@ -87,16 +87,18 @@ public class InputValidator {
      * @return int yearEnroll or "-1"
      */
     public int checkYearEnroll (int yearEnroll) {
-        if (yearEnroll > currentYear) return -1;
+        if (yearEnroll > currentYear || yearEnroll < 1992) return -1;
         return yearEnroll;
     }
 
     /**
      * Returns "-1" if argument is not a date
      * @param date String date
+     * @param lowestYear int the lowest possible year
+     * @param highestYear int the highest possible year
      * @return String date (formated) or "-1"
      */
-    public String checkFullDate (String date) {
+    public String checkFullDate (String date, int lowestYear, int highestYear) {
         if (date.length() != 10) return "-1";
 
         String result = "";
@@ -113,11 +115,37 @@ public class InputValidator {
 
         int day = Integer.parseInt(result.substring(0, 2));
         int month = Integer.parseInt(result.substring(3, 5));
+        int year = Integer.parseInt(result.substring(6));
 
         if (day > 31 || day < 1) return "-1";
         else if (month > 12 || month < 1) return "-1";
+        else if (year < lowestYear) return "-1";
+        else if (year > highestYear && month > 8) return "-1";
+        else if (month == 2 && year%4 == 0 && day > 29) return "-1";
+        else if (month == 2 && day > 28) return "-1";
+        else if (month < 8 && month%2 == 0 && day > 30) return "-1";
+        else if (month > 7 && month%2 == 1 && day > 30) return "-1";
 
         return result;
+    }
+
+    /**
+     * *OVERLOADING* Returns "-1" if argument is not a date. Default year limit: lowestYear-currentYear
+     * @param date String date
+     * @param lowestYear int the lowest possible year
+     * @return String date (formated) or "-1"
+     */
+    public String checkFullDate (String date, int lowestYear) {
+        return checkFullDate(date, lowestYear, currentYear);
+    }
+
+    /**
+     * *OVERLOADING* Returns "-1" if argument is not a date. Default year limit: 1901-currentYear
+     * @param date String date
+     * @return String date (formated) or "-1"
+     */
+    public String checkFullDate (String date) {
+        return checkFullDate(date, 1901);
     }
 
     /**
@@ -203,7 +231,7 @@ public class InputValidator {
      * @return String phone number or "-1"
      */
     public String checkPhoneNumber (String phoneNumber) {
-        if (phoneNumber.length() > 15 || phoneNumber.length() < 3) return "-1";
+        if (phoneNumber.length() > 15 || phoneNumber.length() < 7) return "-1";
 
         if (phoneNumber.charAt(0) != '+') return "-1";
 
