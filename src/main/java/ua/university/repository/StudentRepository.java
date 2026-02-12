@@ -1,32 +1,27 @@
 package ua.university.repository;
 
+import ua.university.domain.Department;
+import ua.university.domain.Faculty;
 import ua.university.domain.Student;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 public class StudentRepository {
     private Student[] students;
 
     public StudentRepository() {
-        ExampleStudents();
+        students = new Student[0];
+    }
+
+    public void setStudents(Student[] initialStudents) {
+        this.students = initialStudents;
     }
 
     public Student[] getStudents() {
         return students.clone();
-    }
-
-    private void ExampleStudents() {
-        students = new Student[2];
-
-        students[0] = new Student(1, "Іван", "Іванович", "Шевченко", "02.03.2007",
-                "ivan@gmail.com", "+380534386432", "3F34AB", 1, "42B",
-                2025, "бюджет", "навчається");
-
-        students[1] = new Student(2, "Марія", "Ігорівна", "Мельник", "18.11.2006",
-                "maria@gmail.com", "+380839301980", "1K91AB", 3, "10B",
-                2023, "контракт", "навчається");
     }
 
     /**
@@ -40,6 +35,15 @@ public class StudentRepository {
                 if (student.getMiddleName().equalsIgnoreCase(names[1])) {
                     if (student.getLastName().equalsIgnoreCase(names[2])) return Optional.of(student);
                 }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Student> findById(int id) {
+        for (Student student : students) {
+            if (student.getId() == id) {
+                return Optional.of(student);
             }
         }
         return Optional.empty();
@@ -95,6 +99,29 @@ public class StudentRepository {
             if (email.equalsIgnoreCase(student.getEmail())) return Optional.of(student);
         }
         return Optional.empty();
+    }
+
+    public Student[] findByFaculty(Faculty faculty) {
+        List<Student> result = new ArrayList<>();
+        for (Student student : students) {
+            if (student.getDepartment() != null &&
+                    student.getDepartment().getFaculty() != null &&
+                    student.getDepartment().getFaculty().getCode() == faculty.getCode()) {
+                result.add(student);
+            }
+        }
+        return result.toArray(new Student[0]);
+    }
+
+    public Student[] findByDepartment(Department department) {
+        List<Student> result = new ArrayList<>();
+        for (Student student : students) {
+            if (student.getDepartment() != null &&
+                    student.getDepartment().getCode() == department.getCode()) {
+                result.add(student);
+            }
+        }
+        return result.toArray(new Student[0]);
     }
 
     /**
