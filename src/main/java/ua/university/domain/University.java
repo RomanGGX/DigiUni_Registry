@@ -40,6 +40,7 @@ public class University {
     public void setCity(String city) {
         this.city = city;
     }
+
     public void setAddress(String address) {
         this.address = address;
     }

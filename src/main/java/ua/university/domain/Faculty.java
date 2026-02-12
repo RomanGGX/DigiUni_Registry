@@ -61,7 +61,7 @@ public class Faculty {
                 "code=" + code +
                 ", name='" + name + '\'' +
                 ", shortName='" + shortName + '\'' +
-                ", dean=" + (dean != null ? dean.getLastName() : "не призначено") +
+                ", dean=" + (dean != null ? dean.getFullName() : "не призначено") +
                 ", contacts='" + contacts + '\'' +
                 '}';
     }

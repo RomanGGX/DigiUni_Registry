@@ -4,18 +4,20 @@ import java.time.LocalDate;
 
 public class Teacher extends Person{
     private String position;
+    private Department department;
     private String academicDegree;
     private String academicTitle;
     private String employmentDate;
     private double workload;
 
     public Teacher(int id, String firstName, String middleName, String lastName, String birthDate, String email, String phoneNumber,
-                   String position, String academicDegree, String academicTitle, String employmentDate, double workload){
+                   String position,  Department department, String academicDegree, String academicTitle, String employmentDate, double workload){
         super(id, firstName, middleName, lastName, birthDate, email, phoneNumber);
         this.position = position;
+        this.department = department;
         this.academicDegree = academicDegree;
         this.academicTitle = academicTitle;
-        this.employmentDate = birthDate;
+        this.employmentDate = employmentDate;
         this.workload = workload;
     }
 
@@ -39,6 +41,17 @@ public class Teacher extends Person{
         return employmentDate;
     }
 
+    public Department getDepartment() {
+        return department;
+    }
+
+    public Faculty getFaculty() {
+        if (department != null) {
+            return department.getFaculty();
+        }
+        return null;
+    }
+
     public void setPosition(String position) {
         this.position = position;
     }
@@ -59,16 +72,22 @@ public class Teacher extends Person{
         this.workload = workload;
     }
 
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
     @Override
     public String toString() {
         return "Teacher{" +
-                "id='" + getId() + '\'' +
+                "id=" + getId() +
                 ", fullName='" + getFullName() + '\'' +
                 ", position='" + position + '\'' +
-                ", academicDegree=" + academicDegree +
+                ", department='" + (department != null ? department.getName() : "не вказано") + '\'' +
+                ", academicDegree='" + academicDegree + '\'' +
                 ", academicTitle='" + academicTitle + '\'' +
-                ", employmentDate=" + employmentDate +
-                ", workload=" + workload +
+                ", workload=" + workload + " годин" +
+                ", email='" + getEmail() + '\'' +
+                ", phoneNumber='" + getPhoneNumber() + '\'' +
                 '}';
     }
 }
