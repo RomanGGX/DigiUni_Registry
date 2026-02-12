@@ -1,6 +1,6 @@
 package ua.university.service;
 
-import ua.university.repository.StudentRepository;
+import ua.university.repository.*;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -14,11 +14,23 @@ public class InputProcessor {
 
     private final CRUDOperations crudOperations;
     private final StudentRepository studentRepository;
+    private final UniversityRepository universityRepository;
+    private final FacultyRepository facultyRepository;
+    private final DepartmentRepository departmentRepository;
+    private final TeacherRepository teacherRepository;
+    private final TransferOperations transferOperations;
+    private final ReportOperations reportOperations;
 
-    public InputProcessor(StudentRepository studentRepository) {
+    public InputProcessor(StudentRepository studentRepository, UniversityRepository universityRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository) {
         this.studentRepository = studentRepository;
-        this.crudOperations = new CRUDOperations(studentRepository);
-        this.findOperations = new FindOperations(studentRepository);
+        this.universityRepository = universityRepository;
+        this.facultyRepository = facultyRepository;
+        this.departmentRepository = departmentRepository;
+        this.teacherRepository = teacherRepository;
+        this.reportOperations = new ReportOperations(studentRepository, teacherRepository, facultyRepository, departmentRepository);
+        this.transferOperations = new TransferOperations(studentRepository, universityRepository, facultyRepository, departmentRepository);
+        this.crudOperations = new CRUDOperations(studentRepository, universityRepository, facultyRepository, departmentRepository, teacherRepository);
+        this.findOperations = new FindOperations(studentRepository, universityRepository);
     }
 
     /** Defines what to interact with */
@@ -35,8 +47,9 @@ public class InputProcessor {
                     4 - студенти
                     5 - викладачі
                     6 - пошук студентів
-                    7 - вихід
-                    """, 7)) {
+                    7 - звіти
+                    8 - вихід
+                    """, 8)) {
                 case 1:
                     processUniversity();
                     break;
@@ -56,6 +69,9 @@ public class InputProcessor {
                     processFind();
                     break;
                 case 7:
+                    processReports();
+                    break;
+                case 8:
                     running = false;
                     break;
             }
@@ -64,12 +80,20 @@ public class InputProcessor {
 
     /** Interacts with university */
     private void processUniversity() {
-        if  (parseRequest("""
+        switch (parseRequest("""
                 
                 Оберіть дію:
-                1 - інформація про заклад
-                2 - повернутися
-                """, 2) == 1) ; // University toString method
+                1 - інформація про університети
+                2 - редагувати інформацію про університет
+                3 - повернутися
+                """, 3)) {
+            case 1:
+                crudOperations.showUniversity();
+                break;
+            case 2:
+                crudOperations.updateUniversity();
+                break;
+        }
     }
 
     /** interacts with faculties */
@@ -84,16 +108,16 @@ public class InputProcessor {
                 5 - повернутися
                 """, 5)) {
             case 1:
-                // Faculty table method
+                crudOperations.showFaculties(facultyRepository.getFaculties());
                 break;
             case 2:
-                // Faculty add method
+                crudOperations.addFaculty();
                 break;
             case 3:
-                // Faculty delete method
+                crudOperations.deleteFaculty();
                 break;
             case 4:
-                // Faculty redact method
+                crudOperations.updateFaculty();
                 break;
         }
     }
@@ -110,16 +134,16 @@ public class InputProcessor {
                 5 - повернутися
                 """, 5)) {
             case 1:
-                // Department table method
+                crudOperations.showDepartments(departmentRepository.getDepartments());
                 break;
             case 2:
-                // Department add method
+                crudOperations.addDepartment();
                 break;
             case 3:
-                // Department delete method
+                crudOperations.deleteDepartment();
                 break;
             case 4:
-                // Department redact method
+                crudOperations.updateDepartment();
                 break;
         }
     }
@@ -150,10 +174,10 @@ public class InputProcessor {
                 crudOperations.updateStudent();
                 break;
             case 5:
-                // Student move method
+                transferOperations.transferStudentToDepartment();
                 break;
             case 6:
-                // Student change course method
+                transferOperations.transferStudentToCourse();
                 break;
         }
     }
@@ -170,16 +194,16 @@ public class InputProcessor {
                 5 - повернутися
                 """, 5)) {
             case 1:
-                // Teacher table method
+                crudOperations.showTeachers(teacherRepository.getTeachers());
                 break;
             case 2:
-                // Teacher add method
+                crudOperations.addTeacher();
                 break;
             case 3:
-                // Teacher delete method
+                crudOperations.deleteTeacher();
                 break;
             case 4:
-                // Teacher redact method
+                crudOperations.updateTeacher();
                 break;
         }
     }
@@ -210,6 +234,47 @@ public class InputProcessor {
                 break;
             case 5:
                 findOperations.studentByEmail();
+                break;
+        }
+    }
+
+    private void processReports() {
+        switch (parseRequest("""
+            
+            Оберіть звіт:
+            1 - всі студенти за курсами
+            2 - студенти факультету за алфавітом
+            3 - викладачі факультету за алфавітом
+            4 - студенти кафедри за курсами
+            5 - студенти кафедри за алфавітом
+            6 - викладачі кафедри за алфавітом
+            7 - студенти кафедри вказаного курсу
+            8 - студенти кафедри вказаного курсу (за алфавітом)
+            9 - повернутися
+            """, 9)) {
+            case 1:
+                reportOperations.showAllStudentsByCourse();
+                break;
+            case 2:
+                reportOperations.showStudentsByFacultyAlphabetically();
+                break;
+            case 3:
+                reportOperations.showTeachersByFacultyAlphabetically();
+                break;
+            case 4:
+                reportOperations.showStudentsByDepartmentByCourse();
+                break;
+            case 5:
+                reportOperations.showStudentsByDepartmentAlphabetically();
+                break;
+            case 6:
+                reportOperations.showTeachersByDepartmentAlphabetically();
+                break;
+            case 7:
+                reportOperations.showStudentsByDepartmentAndCourse();
+                break;
+            case 8:
+                reportOperations.showStudentsByDepartmentAndCourseAlphabetically();
                 break;
         }
     }

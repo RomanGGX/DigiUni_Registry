@@ -2,6 +2,7 @@ package ua.university.service;
 
 import ua.university.domain.Student;
 import ua.university.repository.StudentRepository;
+import ua.university.repository.UniversityRepository;
 
 import java.util.Scanner;
 
@@ -11,9 +12,11 @@ public class FindOperations {
     /** Adds scanner to the class */
     private final Scanner scanner = new Scanner(System.in);
     private final StudentRepository studentRepository;
+    private final UniversityRepository universityRepository;
 
-    public FindOperations (StudentRepository studentRepository) {
+    public FindOperations (StudentRepository studentRepository, UniversityRepository universityRepository) {
         this.studentRepository = studentRepository;
+        this.universityRepository = universityRepository;
     }
 
     /**
