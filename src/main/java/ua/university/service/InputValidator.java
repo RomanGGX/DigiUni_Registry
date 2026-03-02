@@ -2,6 +2,8 @@ package ua.university.service;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InputValidator {
     /**
@@ -211,12 +213,12 @@ public class InputValidator {
     public String checkEmail (String email) {
         if (email.isEmpty()) return "-1";
 
-        boolean atSingPresent = false;
+        Pattern emailPattern = Pattern.compile("(\\w+\\.?)+\\w@(\\w+\\.)+[a-z]{2,4}");
+        Matcher emailMatcher = emailPattern.matcher(email);
 
-        for (int i=0; i < email.length(); i++) {
-            if (atSingPresent) {
-                if (email.charAt(i) == '.' && i != email.length()-1) return email.toLowerCase();
-            } else if (email.charAt(i) == '@') atSingPresent = true;
+        if (emailMatcher.find()) {
+            if (emailMatcher.matches()) return email.toLowerCase();
+            return "-1";
         }
 
         return "-1";
