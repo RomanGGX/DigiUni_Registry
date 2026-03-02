@@ -216,9 +216,8 @@ public class InputValidator {
         Pattern emailPattern = Pattern.compile("(\\w+\\.?)+\\w@(\\w+\\.)+[a-z]{2,4}");
         Matcher emailMatcher = emailPattern.matcher(email);
 
-        if (emailMatcher.find()) {
-            if (emailMatcher.matches()) return email.toLowerCase();
-            return "-1";
+        if (emailMatcher.matches()) {
+            return email.toLowerCase();
         }
 
         return "-1";
@@ -232,12 +231,13 @@ public class InputValidator {
     public String checkPhoneNumber (String phoneNumber) {
         if (phoneNumber.length() > 15 || phoneNumber.length() < 7) return "-1";
 
-        if (phoneNumber.charAt(0) != '+') return "-1";
+        Pattern phonePattern = Pattern.compile("\\+[0-9]+");
+        Matcher phoneMatcher = phonePattern.matcher(phoneNumber);
 
-        for (int i=1; i < phoneNumber.length(); i++) {
-            if (!Character.isDigit(phoneNumber.charAt(i))) return "-1";
+        if (phoneMatcher.matches()) {
+            return phoneNumber;
         }
 
-        return phoneNumber;
+        return "-1";
     }
 }
