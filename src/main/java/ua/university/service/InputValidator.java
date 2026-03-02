@@ -1,9 +1,9 @@
 package ua.university.service;
 
-public class InputValidator {
-    /** Defines and saves a current year */
-    private final int currentYear = 2026;
+import java.time.DateTimeException;
+import java.time.LocalDate;
 
+public class InputValidator {
     /**
      * Adds input validator methods to the class
      */
@@ -87,12 +87,12 @@ public class InputValidator {
      * @return int yearEnroll or "-1"
      */
     public int checkYearEnroll (int yearEnroll) {
-        if (yearEnroll > currentYear || yearEnroll < 1992) return -1;
+        if (yearEnroll > LocalDate.now().getYear() || yearEnroll < 1992) return -1;
         return yearEnroll;
     }
 
     /**
-     * Returns "-1" if argument is not a date
+     * Returns "-1" if argument is not a date or a date in the future
      * @param date String date
      * @param lowestYear int the lowest possible year
      * @param highestYear int the highest possible year
@@ -113,18 +113,15 @@ public class InputValidator {
             } else result += date.charAt(i);
         }
 
-        int day = Integer.parseInt(result.substring(0, 2));
-        int month = Integer.parseInt(result.substring(3, 5));
-        int year = Integer.parseInt(result.substring(6));
+        try {
+            LocalDate dateParsed = LocalDate.parse(date.substring(6) + '-' + date.substring(3, 5) + '-' + date.substring(0, 2));
 
-        if (day > 31 || day < 1) return "-1";
-        else if (month > 12 || month < 1) return "-1";
-        else if (year < lowestYear) return "-1";
-        else if (year > highestYear && month > 8) return "-1";
-        else if (month == 2 && year%4 == 0 && day > 29) return "-1";
-        else if (month == 2 && day > 28) return "-1";
-        else if (month < 8 && month%2 == 0 && day > 30) return "-1";
-        else if (month > 7 && month%2 == 1 && day > 30) return "-1";
+            if (LocalDate.now().isBefore(dateParsed)) return "-1";
+            else if (dateParsed.getYear() < lowestYear) return "-1";
+            else if (dateParsed.getYear() == highestYear && Integer.parseInt(date.substring(3, 5)) > 8) return "-1";
+        } catch (DateTimeException ex) {
+            return "-1";
+        }
 
         return result;
     }
@@ -136,7 +133,7 @@ public class InputValidator {
      * @return String date (formated) or "-1"
      */
     public String checkFullDate (String date, int lowestYear) {
-        return checkFullDate(date, lowestYear, currentYear);
+        return checkFullDate(date, lowestYear, LocalDate.now().getYear());
     }
 
     /**
