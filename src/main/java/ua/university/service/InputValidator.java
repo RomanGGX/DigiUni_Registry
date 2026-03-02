@@ -33,6 +33,8 @@ public class InputValidator {
                 result += Character.toUpperCase(word.charAt(0));
             } else if (i == word.length()-1) {
                 if (word.charAt(word.length()-1) == '\'' || word.charAt(word.length()-1) == '-') return "-1";
+                else if (word.charAt(i-1) == '-') result += Character.toUpperCase(word.charAt(i));
+                else result += Character.toLowerCase(word.charAt(i));
             } else if (Character.isLetter(word.charAt(i-1)) && Character.isLetter(word.charAt(i))) {
                 result += Character.toLowerCase(word.charAt(i));
             } else if ( word.charAt(i-1) == '-' && Character.isLetter(word.charAt(i))) {
