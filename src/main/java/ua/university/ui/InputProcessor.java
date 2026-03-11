@@ -1,5 +1,7 @@
 package ua.university.ui;
 
+import ua.university.exceptions.EmptyInputException;
+import ua.university.exceptions.UnsupportedIntegerInputException;
 import ua.university.repository.*;
 import ua.university.service.CRUDOperations;
 import ua.university.service.FindOperations;
@@ -200,14 +202,14 @@ public class InputProcessor {
             try {
                 String stringResult = scanner.nextLine();
 
-                if (stringResult.isEmpty()) throw new InputMismatchException();
+                if (stringResult.isEmpty()) throw new EmptyInputException("Empty input");
                 else result = Integer.parseInt(stringResult);
 
-                if (result < 1 || result > optionsNumber) throw new IllegalArgumentException();
+                if (result < 1 || result > optionsNumber) throw new UnsupportedIntegerInputException("Unsupported number");
                 resultApproved = true;
-            } catch (IllegalArgumentException ex) {
+            } catch (UnsupportedIntegerInputException | NumberFormatException ex) {
                 System.out.println("Введіть коректне значення (1-" + optionsNumber + ")");
-            } catch (InputMismatchException ex) {
+            } catch (EmptyInputException ex) {
                 System.out.println("Порожнє введення");
             }
         } while (!resultApproved);
