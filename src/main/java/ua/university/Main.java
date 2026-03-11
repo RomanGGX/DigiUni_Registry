@@ -14,8 +14,6 @@ public class Main {
 
     /** Adds a list of access levels */
     private enum AccessLevel {user, manager, admin}
-    /** Utilizes the list of access levels */
-    private static AccessLevel accessLevel = AccessLevel.manager;
 
     public static void main(String[] args) {
         Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository);

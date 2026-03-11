@@ -6,8 +6,7 @@ import ua.university.service.FindOperations;
 import ua.university.service.ReportOperations;
 import ua.university.service.TransferOperations;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 public class InputProcessor {
 
@@ -15,6 +14,10 @@ public class InputProcessor {
     private final FindOperations findOperations;
     /** Adds input scanner to the class */
     private final Scanner scanner = new Scanner(System.in);
+    /** Adds access level */
+    private int accessLevel = 1;
+    /** Saves information about if the program is running */
+    private boolean running = true;
 
     private final CRUDOperations crudOperations;
     private final StudentRepository studentRepository;
@@ -39,256 +42,157 @@ public class InputProcessor {
 
     /** Defines what to interact with */
     public void defineObject () {
-        boolean running = true;
+        List<CommandContainer> mainCommands = new ArrayList<>(List.of(
+                new CommandContainer("університет", this::processUniversity, 1),
+                new CommandContainer("факультети", this::processFaculty, 1),
+                new CommandContainer("кафедри", this::processDepartment, 1),
+                new CommandContainer("студенти", this::processStudent, 1),
+                new CommandContainer("викладачі", this::processTeacher, 1),
+                new CommandContainer("пошук студентів", this::processFind, 1),
+                new CommandContainer("звіти", this::processReports, 1)
+        ));
 
         while (running) {
-            switch (parseRequest("""
-                    
-                    Оберіть, з чим працювати:
-                    1 - університет
-                    2 - факультети
-                    3 - кафедри
-                    4 - студенти
-                    5 - викладачі
-                    6 - пошук студентів
-                    7 - звіти
-                    8 - вихід
-                    """, 8)) {
-                case 1:
-                    processUniversity();
-                    break;
-                case 2:
-                    processFaculty();
-                    break;
-                case 3:
-                    processDepartment();
-                    break;
-                case 4:
-                    processStudent();
-                    break;
-                case 5:
-                    processTeacher();
-                    break;
-                case 6:
-                    processFind();
-                    break;
-                case 7:
-                    processReports();
-                    break;
-                case 8:
-                    running = false;
-                    break;
-            }
+            proceedOption("Оберіть, з чим працювати:", "вихід", mainCommands, true);
         }
     }
 
     /** Interacts with university */
     private void processUniversity() {
-        switch (parseRequest("""
-                
-                Оберіть дію:
-                1 - інформація про університети
-                2 - редагувати інформацію про університет
-                3 - повернутися
-                """, 3)) {
-            case 1:
-                crudOperations.showUniversity();
-                break;
-            case 2:
-                crudOperations.updateUniversity();
-                break;
-        }
+        List<CommandContainer> universityCommands = new ArrayList<>(List.of(
+                new CommandContainer("інформація про університети", crudOperations::showUniversity, 1),
+                new CommandContainer("редагувати інформацію про університет", crudOperations::updateUniversity, 2)
+        ));
+
+        proceedOption("Оберіть дію:", "повернутися", universityCommands);
     }
 
     /** interacts with faculties */
     private void processFaculty() {
-        switch (parseRequest("""
-                
-                Оберіть дію:
-                1 - інформація про факультети
-                2 - створити факультет
-                3 - видалити факультет
-                4 - редагувати факультет
-                5 - повернутися
-                """, 5)) {
-            case 1:
-                crudOperations.showFaculties(facultyRepository.getFaculties());
-                break;
-            case 2:
-                crudOperations.addFaculty();
-                break;
-            case 3:
-                crudOperations.deleteFaculty();
-                break;
-            case 4:
-                crudOperations.updateFaculty();
-                break;
-        }
+        List<CommandContainer> facultyCommands = new ArrayList<>(List.of(
+                new CommandContainer("інформація про факультет", () -> crudOperations.showFaculties(facultyRepository.getFaculties()), 1),
+                new CommandContainer("створити факультет", crudOperations::addFaculty, 2),
+                new CommandContainer("видалити факультет", crudOperations::deleteFaculty, 2),
+                new CommandContainer("редагуфати факультет", crudOperations::updateFaculty, 2)
+        ));
+
+        proceedOption("Оберіть дію:", "певернутися", facultyCommands);
     }
 
     /** Interacts with departments */
     private void processDepartment() {
-        switch (parseRequest("""
-                
-                Оберіть дію:
-                1 - інформація про кафедри
-                2 - створити кафедру
-                3 - видалити кафедру
-                4 - редагувати кафедру
-                5 - повернутися
-                """, 5)) {
-            case 1:
-                crudOperations.showDepartments(departmentRepository.getDepartments());
-                break;
-            case 2:
-                crudOperations.addDepartment();
-                break;
-            case 3:
-                crudOperations.deleteDepartment();
-                break;
-            case 4:
-                crudOperations.updateDepartment();
-                break;
-        }
+        List<CommandContainer> departmentCommands = new ArrayList<>(List.of(
+                new CommandContainer("інформація про кафедри", () -> crudOperations.showDepartments(departmentRepository.getDepartments()), 1),
+                new CommandContainer("створити кафедру", crudOperations::addDepartment, 2),
+                new CommandContainer("видалити кафедру", crudOperations::deleteDepartment, 2),
+                new CommandContainer("редагуфати кафедру", crudOperations::updateDepartment, 2)
+        ));
+
+        proceedOption("Оберіть дію:", "повернутися", departmentCommands);
     }
 
     /** Interacts with students */
     private void processStudent() {
-        switch (parseRequest("""
-                
-                Оберіть дію:
-                1 - інформація про студентів
-                2 - створити студента
-                3 - видалити студента
-                4 - редагувати студента
-                5 - перевести студента
-                6 - змінити курс студента
-                7 - повернутися
-                """, 7)) {
-            case 1:
-                crudOperations.showStudents(studentRepository.getStudents());
-                break;
-            case 2:
-                crudOperations.addStudent();
-                break;
-            case 3:
-                crudOperations.deleteStudent();
-                break;
-            case 4:
-                crudOperations.updateStudent();
-                break;
-            case 5:
-                transferOperations.transferStudentToDepartment();
-                break;
-            case 6:
-                transferOperations.transferStudentToCourse();
-                break;
-        }
+        List<CommandContainer> studentCommands = new ArrayList<>(List.of(
+                new CommandContainer("інформація про студентів", () -> crudOperations.showStudents(studentRepository.getStudents()), 1),
+                new CommandContainer("створити студента", crudOperations::addStudent, 2),
+                new CommandContainer("видалити студента", crudOperations::deleteStudent, 2),
+                new CommandContainer("редагуфати студента", crudOperations::updateStudent, 2),
+                new CommandContainer("перевести студента", transferOperations::transferStudentToDepartment, 2),
+                new CommandContainer("змінити курс студента", transferOperations::transferStudentToCourse, 2)
+        ));
+
+        proceedOption("Оберіть дію:", "повернутися", studentCommands);
     }
 
     /** Interacts with teachers */
     private void processTeacher() {
-        switch (parseRequest("""
-                
-                Оберіть дію:
-                1 - інформація про викладачів
-                2 - створити викладача
-                3 - видалити викладача
-                4 - редагувати викладача
-                5 - повернутися
-                """, 5)) {
-            case 1:
-                crudOperations.showTeachers(teacherRepository.getTeachers());
-                break;
-            case 2:
-                crudOperations.addTeacher();
-                break;
-            case 3:
-                crudOperations.deleteTeacher();
-                break;
-            case 4:
-                crudOperations.updateTeacher();
-                break;
-        }
+        List<CommandContainer> teacherCommands = new ArrayList<>(List.of(
+                new CommandContainer("інформація про викладачів", () -> crudOperations.showTeachers(teacherRepository.getTeachers()), 1),
+                new CommandContainer("створити викладача", crudOperations::addTeacher, 2),
+                new CommandContainer("видалити викладача", crudOperations::deleteTeacher, 2),
+                new CommandContainer("редагуфати викладача", crudOperations::updateTeacher, 2)
+        ));
+
+        proceedOption("Оберіть дію:", "повернутися", teacherCommands);
     }
 
     /** Interacts with find operations */
     private void processFind() {
-        switch (parseRequest("""
-                
-                Оберіть параметр для пошуку:
-                1 - повне ім'я
-                2 - курс
-                3 - група
-                4 - id студента
-                5 - електронна пошта
-                6 - повернутися
-                """, 6)) {
-            case 1:
-                findOperations.studentByFullName();
-                break;
-            case 2:
-                findOperations.studentByCourse();
-                break;
-            case 3:
-                findOperations.studentByGroup();
-                break;
-            case 4:
-                findOperations.studentByStudentID();
-                break;
-            case 5:
-                findOperations.studentByEmail();
-                break;
-        }
+        List<CommandContainer> findCommands = new ArrayList<>(List.of(
+                new CommandContainer("повне ім'я", findOperations::studentByFullName, 1),
+                new CommandContainer("курс", findOperations::studentByCourse, 1),
+                new CommandContainer("група", findOperations::studentByGroup, 1),
+                new CommandContainer("id студента", findOperations::studentByStudentID, 1),
+                new CommandContainer("електронна пошта", findOperations::studentByEmail, 1)
+        ));
+
+        proceedOption("Оберіть параметр для пошуку:", "повернутися", findCommands);
     }
 
     private void processReports() {
-        switch (parseRequest("""
-            
-            Оберіть звіт:
-            1 - всі студенти за курсами
-            2 - студенти факультету за алфавітом
-            3 - викладачі факультету за алфавітом
-            4 - студенти кафедри за курсами
-            5 - студенти кафедри за алфавітом
-            6 - викладачі кафедри за алфавітом
-            7 - студенти кафедри вказаного курсу
-            8 - студенти кафедри вказаного курсу (за алфавітом)
-            9 - повернутися
-            """, 9)) {
-            case 1:
-                reportOperations.showAllStudentsByCourse();
-                break;
-            case 2:
-                reportOperations.showStudentsByFacultyAlphabetically();
-                break;
-            case 3:
-                reportOperations.showTeachersByFacultyAlphabetically();
-                break;
-            case 4:
-                reportOperations.showStudentsByDepartmentByCourse();
-                break;
-            case 5:
-                reportOperations.showStudentsByDepartmentAlphabetically();
-                break;
-            case 6:
-                reportOperations.showTeachersByDepartmentAlphabetically();
-                break;
-            case 7:
-                reportOperations.showStudentsByDepartmentAndCourse();
-                break;
-            case 8:
-                reportOperations.showStudentsByDepartmentAndCourseAlphabetically();
-                break;
+        List<CommandContainer> departmentCommands = new ArrayList<>(List.of(
+                new CommandContainer("всі студенти за курсами", reportOperations::showAllStudentsByCourse, 1),
+                new CommandContainer("студенти факультету за алфавітом", reportOperations::showStudentsByFacultyAlphabetically, 1),
+                new CommandContainer("викладачі факультету за алфавітом", reportOperations::showTeachersByFacultyAlphabetically, 1),
+                new CommandContainer("студенти кафедри за курсами", reportOperations::showStudentsByDepartmentByCourse, 1),
+                new CommandContainer("студенти кафедри за алфавітом", reportOperations::showStudentsByDepartmentAlphabetically, 1),
+                new CommandContainer("викладачі кафедри за алфавітом", reportOperations::showTeachersByDepartmentAlphabetically, 1),
+                new CommandContainer("студенти кафедри вказаного курсу", reportOperations::showStudentsByDepartmentAndCourse, 1),
+                new CommandContainer("студенти кафедри вказаного курсу (за алфавітом)", reportOperations::showStudentsByDepartmentAndCourseAlphabetically, 1)
+        ));
+
+        proceedOption("Оберіть звіт:", "повернутися", departmentCommands);
+    }
+
+
+/////////////////////////////////////////////////////////////////////
+////                     OPTIONS CHOOSE SYSTEM                   ////
+/////////////////////////////////////////////////////////////////////
+
+    /**
+     * Output the options list and allows to choose an option
+     * @param firstRowText String text before the list
+     * @param returnRowText String return option text
+     * @param listToProceed CommandContainer list of options to output
+     * @param isFirst boolean. Set "true" to exit the program on return option
+     */
+    private void proceedOption(String firstRowText, String returnRowText, List<CommandContainer> listToProceed, boolean isFirst) {
+        int counter = 1;
+        Map<Integer, Runnable> commandsMap = new HashMap<>();
+
+        System.out.println("\n" + firstRowText);
+
+        for (CommandContainer currentCommand : listToProceed) {
+            if (currentCommand.isAvailable(accessLevel)) {
+                System.out.println(counter + " - " + currentCommand.getMessage());
+                commandsMap.put(counter, currentCommand.getAction());
+                counter++;
+            }
         }
+
+        System.out.println(counter + " - " + returnRowText + "\n");
+        int userInput = getIntInput(counter);
+
+        if (userInput != counter) commandsMap.get(userInput).run();
+        else if (isFirst) running = false;
+    }
+
+    /**
+     * *OVERLOADING* Output the options list and allows to choose an option. Return does not finish the program
+     * @param firstRowText String text before the list
+     * @param returnRowText String return option text
+     * @param listToProceed CommandContainer list of options to output
+     */
+    private void proceedOption(String firstRowText, String returnRowText, List<CommandContainer> listToProceed) {
+        proceedOption(firstRowText, returnRowText, listToProceed, false);
     }
 
 /////////////////////////////////////////////////////////////////////
 ////                       INT PARSE SYSTEM                      ////
 /////////////////////////////////////////////////////////////////////
 
-    private int parseRequest (String commandText, int optionsNumber) {
-        System.out.println(commandText);
+    private int getIntInput(int optionsNumber) {
         int result = 0;
         boolean resultApproved = false;
 
