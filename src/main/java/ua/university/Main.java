@@ -1,7 +1,6 @@
 package ua.university;
-import ua.university.domain.University;
 import ua.university.repository.*;
-import ua.university.service.InputProcessor;
+import ua.university.ui.InputProcessor;
 
 public class Main {
 

@@ -1,6 +1,10 @@
-package ua.university.service;
+package ua.university.ui;
 
 import ua.university.repository.*;
+import ua.university.service.CRUDOperations;
+import ua.university.service.FindOperations;
+import ua.university.service.ReportOperations;
+import ua.university.service.TransferOperations;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
