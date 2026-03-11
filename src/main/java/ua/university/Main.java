@@ -1,7 +1,6 @@
 package ua.university;
-import ua.university.domain.University;
 import ua.university.repository.*;
-import ua.university.service.InputProcessor;
+import ua.university.ui.InputProcessor;
 
 public class Main {
 
@@ -15,8 +14,6 @@ public class Main {
 
     /** Adds a list of access levels */
     private enum AccessLevel {user, manager, admin}
-    /** Utilizes the list of access levels */
-    private static AccessLevel accessLevel = AccessLevel.manager;
 
     public static void main(String[] args) {
         Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository);
