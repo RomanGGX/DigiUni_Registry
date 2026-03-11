@@ -9,6 +9,7 @@ public class Main {
     private static final DepartmentRepository departmentRepository = new DepartmentRepository();
     private static final StudentRepository studentRepository = new StudentRepository();
     private static final TeacherRepository teacherRepository = new TeacherRepository();
+    private static final UserRepository userRepository = new UserRepository();
 
     private static final InputProcessor inputProcessor = new InputProcessor(studentRepository, universityRepository, facultyRepository, departmentRepository, teacherRepository);
 
