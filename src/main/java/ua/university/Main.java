@@ -11,13 +11,13 @@ public class Main {
     private static final TeacherRepository teacherRepository = new TeacherRepository();
     private static final UserRepository userRepository = new UserRepository();
 
-    private static final InputProcessor inputProcessor = new InputProcessor(studentRepository, universityRepository, facultyRepository, departmentRepository, teacherRepository);
+    private static final InputProcessor inputProcessor = new InputProcessor(studentRepository, universityRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
 
     /** Adds a list of access levels */
     private enum AccessLevel {user, manager, admin}
 
     public static void main(String[] args) {
-        Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository);
+        Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
 
         System.out.println();
         System.out.println("╔════════════════════════════════════════════╗");

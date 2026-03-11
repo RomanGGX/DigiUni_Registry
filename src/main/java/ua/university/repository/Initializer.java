@@ -3,7 +3,7 @@ package ua.university.repository;
 import ua.university.domain.*;
 
 public class Initializer {
-    public static void initializeAll(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository) {
+    public static void initializeAll(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository, UserRepository userRepository) {
 
         //kma faculties
         Faculty fi = new Faculty(1, "Факультет інформатики", "ФІ", null, "fi@ukma.edu.ua");

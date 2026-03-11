@@ -3,10 +3,7 @@ package ua.university.ui;
 import ua.university.exceptions.EmptyInputException;
 import ua.university.exceptions.UnsupportedIntegerInputException;
 import ua.university.repository.*;
-import ua.university.service.CRUDOperations;
-import ua.university.service.FindOperations;
-import ua.university.service.ReportOperations;
-import ua.university.service.TransferOperations;
+import ua.university.service.*;
 
 import java.util.*;
 
@@ -27,19 +24,23 @@ public class InputProcessor {
     private final FacultyRepository facultyRepository;
     private final DepartmentRepository departmentRepository;
     private final TeacherRepository teacherRepository;
+    private final UserRepository userRepository;
     private final TransferOperations transferOperations;
     private final ReportOperations reportOperations;
+    private final UserOperations userOperations;
 
-    public InputProcessor(StudentRepository studentRepository, UniversityRepository universityRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository) {
+    public InputProcessor(StudentRepository studentRepository, UniversityRepository universityRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository, UserRepository userRepository) {
         this.studentRepository = studentRepository;
         this.universityRepository = universityRepository;
         this.facultyRepository = facultyRepository;
         this.departmentRepository = departmentRepository;
         this.teacherRepository = teacherRepository;
+        this.userRepository = userRepository;
         this.reportOperations = new ReportOperations(studentRepository, teacherRepository, facultyRepository, departmentRepository);
         this.transferOperations = new TransferOperations(studentRepository, universityRepository, facultyRepository, departmentRepository);
         this.crudOperations = new CRUDOperations(studentRepository, universityRepository, facultyRepository, departmentRepository, teacherRepository);
         this.findOperations = new FindOperations(studentRepository, universityRepository);
+        this.userOperations = new UserOperations(userRepository);
     }
 
     /** Defines what to interact with */
@@ -51,7 +52,9 @@ public class InputProcessor {
                 new CommandContainer("студенти", this::processStudent, 1),
                 new CommandContainer("викладачі", this::processTeacher, 1),
                 new CommandContainer("пошук студентів", this::processFind, 1),
-                new CommandContainer("звіти", this::processReports, 1)
+                new CommandContainer("звіти", this::processReports, 1),
+                new CommandContainer("вхід", this::authorize, 1),
+                new CommandContainer("дії з користувачами", this::processUser, 3)
         ));
 
         while (running) {
@@ -147,6 +150,67 @@ public class InputProcessor {
         proceedOption("Оберіть звіт:", "повернутися", departmentCommands);
     }
 
+    /** Interacts with user operations */
+    private void processUser() {
+        List<CommandContainer> userContainer = new ArrayList<>(List.of(
+                new CommandContainer("додати користовача", userOperations::addUser, 3)
+        ));
+
+        proceedOption("Оберіть дію:", "повернутися", userContainer);
+    }
+
+/////////////////////////////////////////////////////////////////////
+////                     ACCESS LEVEL CHANGE                     ////
+/////////////////////////////////////////////////////////////////////
+
+    /** Allows to authorize */
+    private void authorize() {
+        String loginName = readNotEmpty("Введіть логін: ");
+        String password = readNotEmpty("Введіть пароль: ");
+
+        if (userRepository.checkIfExists(loginName, password)) {
+            accessLevel = userRepository.getAccessLevel(loginName);
+
+            switch (accessLevel) {
+                case 1:
+                    System.out.print("\nВітаємо!\nРівень доступу - користувач\n");
+                    break;
+                case 2:
+                    System.out.print("\nВітаємо!\nРівень доступу - менеджер\n");
+                    break;
+                case 3:
+                    System.out.print("\nВітаємо!\nРівень доступу - адміністратор\n");
+                    break;
+            }
+        }
+        else System.out.println("\nНеправильний логін або пароль\n");
+    }
+
+    /**
+     * Reads a not empty line message
+     * @param message String message in the same line with the answer
+     * @return String user input
+     */
+    private String readNotEmpty(String message) {
+        boolean checker = false;
+        String result = "";
+
+        System.out.print(message);
+
+        do {
+            try {
+                result = scanner.nextLine();
+
+                if (result.isEmpty()) throw new EmptyInputException("Empty login input");
+
+                checker = true;
+            } catch (EmptyInputException ex) {
+                System.out.println("\nПорожнє введення");
+            }
+        } while (!checker);
+
+        return result;
+    }
 
 /////////////////////////////////////////////////////////////////////
 ////                     OPTIONS CHOOSE SYSTEM                   ////
