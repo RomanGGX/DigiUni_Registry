@@ -1,9 +1,11 @@
 package ua.university.service;
 
 import ua.university.domain.Student;
+import ua.university.exceptions.EmptyOptionException;
 import ua.university.repository.StudentRepository;
 import ua.university.repository.UniversityRepository;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class FindOperations {
@@ -43,11 +45,11 @@ public class FindOperations {
 
         try {
             Student student = studentRepository.FindByFullName(resultTokens)
-                    .orElseThrow(() -> new IllegalArgumentException("Студента не знайдено"));
+                    .orElseThrow(() -> new EmptyOptionException("Student not found by email"));
 
             System.out.println(student);
-        } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
+        } catch (EmptyOptionException ex) {
+            System.out.println("\nСтудента не знайдено");
         }
     }
 
@@ -69,14 +71,13 @@ public class FindOperations {
             }
         } while (result < 1 || result > 6);
 
-        int counter = 0;
+        List<Student> studentsByCourse = studentRepository.FindByCourse(result);
 
-        for (Student student : studentRepository.FindByCourse(result)) {
+        for (Student student : studentsByCourse) {
             System.out.println(student);
-            counter++;
         }
 
-        if (counter == 0) System.err.println("Студента не знайдено");
+        if (studentsByCourse.isEmpty()) System.out.println("\nСтудента не знайдено");
     }
 
     /**
@@ -96,14 +97,13 @@ public class FindOperations {
             }
         } while (userInput.equals("-1"));
 
-        int counter = 0;
+        List<Student> studentsByGroup = studentRepository.FindByGroup(userInput);
 
-        for (Student student : studentRepository.FindByGroup(userInput)) {
+        for (Student student : studentsByGroup) {
             System.out.println(student);
-            counter++;
         }
 
-        if (counter == 0) System.err.println("Студента не знайдено");
+        if (studentsByGroup.isEmpty()) System.out.println("\nСтудента не знайдено");
     }
 
     /**
@@ -125,11 +125,11 @@ public class FindOperations {
 
         try {
             Student student = studentRepository.FindByStudentID(userInput)
-                    .orElseThrow(() -> new IllegalArgumentException("Студента не знайдено"));
+                    .orElseThrow(() -> new EmptyOptionException("Student not found by student ID"));
 
             System.out.println(student);
-        } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
+        } catch (EmptyOptionException ex) {
+            System.out.println("\nСтудента не знайдено");
         }
     }
 
@@ -153,11 +153,11 @@ public class FindOperations {
 
         try {
             Student student = studentRepository.FindByEmail(userInput)
-                    .orElseThrow(() -> new IllegalArgumentException("Студента не знайдено"));
+                    .orElseThrow(() -> new EmptyOptionException("Student not found by email"));
 
             System.out.println(student);
-        } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
+        } catch (EmptyOptionException ex) {
+            System.out.println("\nСтудента не знайдено");
         }
     }
 }
