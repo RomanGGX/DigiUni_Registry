@@ -11,7 +11,9 @@ public class Initializer {
         Faculty fcnct = new Faculty(3, "Факультет соціальних наук та соціальних технологій", "ФСНСТ", null, "fcnct@ukma.edu.ua");
 
         Faculty[] faculties = {fi, fen, fcnct};
-        facultyRepository.setFaculties(faculties);
+        for (Faculty faculty : faculties) {
+            facultyRepository.add(faculty);
+        }
 
         //department examples
         Department dm = new Department(1, "Кафедра математики", fi, null, "1-100");
@@ -22,7 +24,9 @@ public class Initializer {
         Department so = new Department(6, "Кафедра соціології", fcnct, null, "6-201");
 
         Department[] departments = {dm, di, df, det, po, so};
-        departmentRepository.setDepartments(departments);
+        for (Department department : departments) {
+            departmentRepository.add(department);
+        }
 
         //Student examples
         Student st1 = new Student(1, "Іван", "Іванович", "Шевченко", "02.03.2007",
@@ -58,7 +62,7 @@ public class Initializer {
                 2025, "бюджет", "навчається", det);
 
         Student st9 = new Student(9, "Марія", "Ігорівна", "Мельник", "18.11.2006",
-                "maria@gmail.com", "+380839301980", "1K91AB", 3, "10B",
+                "maria2@gmail.com", "+380839301980", "1K91AB", 3, "10B",
                 2023, "контракт", "навчається", po);
 
         Student st10 = new Student(10, "Богдан", "Віталійович", "Сидоренко", "11.06.2007",
@@ -74,7 +78,9 @@ public class Initializer {
                 2025, "бюджет", "навчається", so);
 
         Student[] students = {st1, st2, st3, st4, st5, st6, st7, st8, st9, st10, st11, st12};
-        studentRepository.setStudents(students);
+        for (Student student : students) {
+            studentRepository.add(student);
+        }
 
         //Teacher examples
         Teacher teacher1 = new Teacher(1, "Олександр", "Петрович", "Коваленко", "15.03.1975",
@@ -129,13 +135,15 @@ public class Initializer {
                 teacher1, teacher2, teacher3, teacher4, teacher5, teacher6,
                 teacher7, teacher8, teacher9, teacher10, teacher11, teacher12
         };
-        teacherRepository.setInitialData(teachers);
+        for(Teacher teacher : teachers) {
+            teacherRepository.add(teacher);
+        }
 
         fi.setDean(teacher1);
         fen.setDean(teacher2);
 
-        facultyRepository.updateFaculty(fi.getCode(), fi);
-        facultyRepository.updateFaculty(fen.getCode(), fen);
+        facultyRepository.update(fi.getCode(), fi);
+        facultyRepository.update(fen.getCode(), fen);
 
         po.setHead(teacher3);
         so.setHead(teacher4);
@@ -144,11 +152,11 @@ public class Initializer {
         df.setHead(teacher7);
         di.setHead(teacher8);
 
-        departmentRepository.updateDepartment(po.getCode(), po);
-        departmentRepository.updateDepartment(so.getCode(), so);
-        departmentRepository.updateDepartment(det.getCode(), det);
-        departmentRepository.updateDepartment(dm.getCode(), dm);
-        departmentRepository.updateDepartment(df.getCode(), df);
-        departmentRepository.updateDepartment(di.getCode(), di);
+        departmentRepository.update(po.getCode(), po);
+        departmentRepository.update(so.getCode(), so);
+        departmentRepository.update(det.getCode(), det);
+        departmentRepository.update(dm.getCode(), dm);
+        departmentRepository.update(df.getCode(), df);
+        departmentRepository.update(di.getCode(), di);
     }
 }

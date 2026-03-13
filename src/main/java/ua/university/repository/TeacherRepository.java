@@ -1,36 +1,26 @@
 package ua.university.repository;
 
 import ua.university.domain.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class TeacherRepository {
-    private Teacher[] teachers;
+public class TeacherRepository implements Repository<Teacher, Integer> {
 
-    public TeacherRepository() {
-        teachers = new Teacher[0];
+    private final Map<Integer, Teacher> teachersById = new LinkedHashMap<>();
+    private final Set<String> emailIndex = new HashSet<>();
+
+    @Override
+    public List<Teacher> findAll() {
+        return Collections.unmodifiableList(new ArrayList<>(teachersById.values()));
     }
 
-    public void setInitialData(Teacher[] initialTeachers) {
-        this.teachers = initialTeachers;
+    @Override
+    public Optional<Teacher> findById(Integer id) {
+        return Optional.ofNullable(teachersById.get(id));
     }
 
-    public Teacher[] getTeachers() {
-        return teachers.clone();
-    }
-
-    public Optional<Teacher> findById(int id) {
-        for (Teacher teacher : teachers) {
-            if (teacher.getId() == id) {
-                return Optional.of(teacher);
-            }
-        }
-        return Optional.empty();
-    }
 
     public Optional<Teacher> findByFullName(String[] names) {
-        for (Teacher teacher : teachers) {
+        for (Teacher teacher : teachersById.values()) {
             if (teacher.getFirstName().equalsIgnoreCase(names[0]) &&
                     teacher.getMiddleName().equalsIgnoreCase(names[1]) &&
                     teacher.getLastName().equalsIgnoreCase(names[2])) {
@@ -41,93 +31,83 @@ public class TeacherRepository {
     }
 
     public Optional<Teacher> findByEmail(String email) {
-        for (Teacher teacher : teachers) {
-            if (email.equalsIgnoreCase(teacher.getEmail())) {
+        for (Teacher teacher : teachersById.values()) {
+            if (teacher.getEmail().equalsIgnoreCase(email)) {
                 return Optional.of(teacher);
             }
         }
         return Optional.empty();
     }
 
-    public Teacher[] findByFaculty(Faculty faculty) {
+    public List<Teacher> findByFaculty(Faculty faculty) {
         List<Teacher> result = new ArrayList<>();
-        for (Teacher teacher : teachers) {
+        for (Teacher teacher : teachersById.values()) {
             if (teacher.getDepartment() != null &&
                     teacher.getDepartment().getFaculty() != null &&
                     teacher.getDepartment().getFaculty().getCode() == faculty.getCode()) {
                 result.add(teacher);
             }
         }
-        return result.toArray(new Teacher[0]);
+        return result;
     }
 
-    public Teacher[] findByDepartment(Department department) {
+    public List<Teacher> findByDepartment(Department department) {
         List<Teacher> result = new ArrayList<>();
-        for (Teacher teacher : teachers) {
+        for (Teacher teacher : teachersById.values()) {
             if (teacher.getDepartment() != null &&
                     teacher.getDepartment().getCode() == department.getCode()) {
                 result.add(teacher);
             }
         }
-        return result.toArray(new Teacher[0]);
+        return result;
     }
 
-    public Teacher[] findByPosition(String position) {
+    public List<Teacher> findByPosition(String position) {
         List<Teacher> result = new ArrayList<>();
-        for (Teacher teacher : teachers) {
+        for (Teacher teacher : teachersById.values()) {
             if (teacher.getPosition().equalsIgnoreCase(position)) {
                 result.add(teacher);
             }
         }
-        return result.toArray(new Teacher[0]);
+        return result;
     }
 
-    public void addTeacher(Teacher teacher) {
-        Teacher[] newArray = new Teacher[teachers.length + 1];
-        System.arraycopy(teachers, 0, newArray, 0, teachers.length);
-        newArray[teachers.length] = teacher;
-        teachers = newArray;
+    @Override
+    public void add(Teacher teacher) {
+        teachersById.put(teacher.getId(), teacher);
+        emailIndex.add(teacher.getEmail().toLowerCase());
     }
 
-    public boolean deleteTeacherById(int id) {
-        boolean found = false;
-        for (Teacher teacher : teachers) {
-            if (teacher.getId() == id) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            return false;
-        }
-
-        Teacher[] newArray = new Teacher[teachers.length - 1];
-        int newIndex = 0;
-        for (Teacher teacher : teachers) {
-            if (teacher.getId() != id) {
-                newArray[newIndex++] = teacher;
-            }
-        }
-        teachers = newArray;
+    @Override
+    public boolean deleteById(Integer id) {
+        Teacher removed = teachersById.remove(id);
+        if (removed == null) return false;
+        emailIndex.remove(removed.getEmail().toLowerCase());
         return true;
     }
 
-    public boolean updateTeacher(int id, Teacher updatedTeacher) {
-        for (int i = 0; i < teachers.length; i++) {
-            if (teachers[i].getId() == id) {
-                teachers[i] = updatedTeacher;
-                return true;
-            }
+    @Override
+    public boolean update(Integer id, Teacher updatedTeacher) {
+        Teacher current = teachersById.get(id);
+        if (current == null) return false;
+
+        String oldEmail = current.getEmail().toLowerCase();
+        String newEmail = updatedTeacher.getEmail().toLowerCase();
+        if (!oldEmail.equals(newEmail) && emailIndex.contains(newEmail)) {
+            throw new IllegalArgumentException("Викладач з email '" + updatedTeacher.getEmail() + "' вже існує.");
         }
-        return false;
+
+        emailIndex.remove(oldEmail);
+        emailIndex.add(newEmail);
+        teachersById.put(id, updatedTeacher);
+        return true;
     }
 
     public int getNextId() {
         int maxId = 0;
-        for (Teacher teacher : teachers) {
-            if (teacher.getId() > maxId) {
-                maxId = teacher.getId();
-            }
+        for (int id : teachersById.keySet()) {
+            if (id > maxId)
+                maxId = id;
         }
         return maxId + 1;
     }
