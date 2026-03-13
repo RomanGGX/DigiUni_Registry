@@ -1,5 +1,7 @@
 package ua.university.domain;
 
+import java.util.Objects;
+
 public class Student extends Person{
     private String studentId;
     private int course;
@@ -103,5 +105,18 @@ public class Student extends Person{
                 ", studyForm='" + studyForm + '\'' +
                 ", status='" + status + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student)) return false;
+        Student other = (Student) o;
+        return this.getId() == other.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

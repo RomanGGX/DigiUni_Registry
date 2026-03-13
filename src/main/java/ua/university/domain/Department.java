@@ -1,5 +1,7 @@
 package ua.university.domain;
 
+import java.util.Objects;
+
 public class Department {
     private int code;
     private String name;
@@ -64,5 +66,18 @@ public class Department {
                 ", head=" + head +
                 ", cabinet='" + cabinet + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Department)) return false;
+        Department other = (Department) o;
+        return this.code == other.code;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCode());
     }
 }
