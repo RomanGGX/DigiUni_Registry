@@ -1,6 +1,7 @@
 package ua.university.domain;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Teacher extends Person{
     private String position;
@@ -89,5 +90,18 @@ public class Teacher extends Person{
                 ", email='" + getEmail() + '\'' +
                 ", phoneNumber='" + getPhoneNumber() + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Teacher)) return false;
+        Teacher other = (Teacher) o;
+        return this.getId() == other.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

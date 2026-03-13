@@ -1,80 +1,49 @@
 package ua.university.repository;
 
 import ua.university.domain.Faculty;
-import ua.university.domain.University;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.Optional;
 
-public class FacultyRepository {
-    private Faculty[] faculties;
+public class FacultyRepository implements Repository<Faculty, Integer> {
 
-    public FacultyRepository() {
-        faculties = new Faculty[0];
+    private final Map<Integer, Faculty> facultiesByCode = new LinkedHashMap<>();
+
+    @Override
+    public List<Faculty> findAll() {
+        return Collections.unmodifiableList(new ArrayList<>(facultiesByCode.values()));
     }
 
-    public Faculty[] getFaculties() {
-        return faculties.clone();
+    @Override
+    public Optional<Faculty> findById(Integer code) {
+        return Optional.ofNullable(facultiesByCode.get(code));
     }
 
-    public void setFaculties(Faculty[] initialFaculties) {
-        this.faculties = initialFaculties;
-    }
-
-    public Optional<Faculty> findByCode(int code) {
-        for (Faculty faculty : faculties) {
-            if (faculty.getCode() == code) {
-                return Optional.of(faculty);
-            }
+        @Override
+    public void add(Faculty faculty) {
+        if (facultiesByCode.containsKey(faculty.getCode())) {
+            throw new IllegalArgumentException("Факультет з кодом " + faculty.getCode() + " вже існує.");
         }
-        return Optional.empty();
+        facultiesByCode.put(faculty.getCode(), faculty);
     }
 
-    public void addFaculty(Faculty faculty) {
-        Faculty[] newArray = new Faculty[faculties.length + 1];
-        System.arraycopy(faculties, 0, newArray, 0, faculties.length);
-        newArray[faculties.length] = faculty;
-        faculties = newArray;
+    @Override
+    public boolean deleteById(Integer code) {
+        return facultiesByCode.remove(code) != null;
     }
 
-    public boolean deleteFacultyByCode(int code) {
-        boolean found = false;
-        for (Faculty faculty : faculties) {
-            if (faculty.getCode() == code) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) return false;
-
-        Faculty[] newArray = new Faculty[faculties.length - 1];
-        int newIndex = 0;
-        for (Faculty faculty : faculties) {
-            if (faculty.getCode() != code) {
-                newArray[newIndex++] = faculty;
-            }
-        }
-        faculties = newArray;
+    @Override
+    public boolean update(Integer code, Faculty updatedFaculty) {
+        if (!facultiesByCode.containsKey(code)) return false;
+        facultiesByCode.put(code, updatedFaculty);
         return true;
-    }
-
-    public boolean updateFaculty(int code, Faculty updatedFaculty) {
-        for (int i = 0; i < faculties.length; i++) {
-            if (faculties[i].getCode() == code) {
-                faculties[i] = updatedFaculty;
-                return true;
-            }
-        }
-        return false;
     }
 
     public int getNextCode() {
         int maxCode = 0;
-        for (Faculty faculty : faculties) {
-            if (faculty.getCode() > maxCode) {
-                maxCode = faculty.getCode();
-            }
+        for (int code : facultiesByCode.keySet()) {
+            if (code > maxCode)
+                maxCode = code;
         }
         return maxCode + 1;
     }

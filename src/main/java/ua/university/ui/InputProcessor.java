@@ -18,7 +18,11 @@ public class InputProcessor {
     /** Saves information about if the program is running */
     private boolean running = true;
 
-    private final CRUDOperations crudOperations;
+    private final UniversityOperations universityOperations;
+    private final StudentOperations studentOperations;
+    private final FacultyOperations facultyOperations;
+    private final TeacherOperations teacherOperations;
+    private final DepartmentOperations departmentOperations;
     private final StudentRepository studentRepository;
     private final UniversityRepository universityRepository;
     private final FacultyRepository facultyRepository;
@@ -38,9 +42,13 @@ public class InputProcessor {
         this.userRepository = userRepository;
         this.reportOperations = new ReportOperations(studentRepository, teacherRepository, facultyRepository, departmentRepository);
         this.transferOperations = new TransferOperations(studentRepository, universityRepository, facultyRepository, departmentRepository);
-        this.crudOperations = new CRUDOperations(studentRepository, universityRepository, facultyRepository, departmentRepository, teacherRepository);
         this.findOperations = new FindOperations(studentRepository, universityRepository);
         this.userOperations = new UserOperations(userRepository);
+        this.studentOperations = new StudentOperations(studentRepository, facultyRepository, departmentRepository);
+        this.teacherOperations = new TeacherOperations(facultyRepository, departmentRepository, teacherRepository);
+        this.facultyOperations = new FacultyOperations(facultyRepository, teacherRepository);
+        this.departmentOperations = new DepartmentOperations(facultyRepository, departmentRepository, teacherRepository);
+        this.universityOperations = new UniversityOperations(universityRepository);
     }
 
     /** Defines what to interact with */
@@ -65,8 +73,8 @@ public class InputProcessor {
     /** Interacts with university */
     private void processUniversity() {
         List<CommandContainer> universityCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про університети", crudOperations::showUniversity, 1),
-                new CommandContainer("редагувати інформацію про університет", crudOperations::updateUniversity, 2)
+                new CommandContainer("інформація про університети", universityOperations::showUniversity, 1),
+                new CommandContainer("редагувати інформацію про університет", universityOperations::updateUniversity, 2)
         ));
 
         proceedOption("Оберіть дію:", "повернутися", universityCommands);
@@ -75,10 +83,10 @@ public class InputProcessor {
     /** interacts with faculties */
     private void processFaculty() {
         List<CommandContainer> facultyCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про факультет", () -> crudOperations.showFaculties(facultyRepository.getFaculties()), 1),
-                new CommandContainer("створити факультет", crudOperations::addFaculty, 2),
-                new CommandContainer("видалити факультет", crudOperations::deleteFaculty, 2),
-                new CommandContainer("редагуфати факультет", crudOperations::updateFaculty, 2)
+                new CommandContainer("інформація про факультет", () -> facultyOperations.showFaculties(facultyRepository.findAll()), 1),
+                new CommandContainer("створити факультет", facultyOperations::addFaculty, 2),
+                new CommandContainer("видалити факультет", facultyOperations::deleteFaculty, 2),
+                new CommandContainer("редагуфати факультет", facultyOperations::updateFaculty, 2)
         ));
 
         proceedOption("Оберіть дію:", "певернутися", facultyCommands);
@@ -87,10 +95,10 @@ public class InputProcessor {
     /** Interacts with departments */
     private void processDepartment() {
         List<CommandContainer> departmentCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про кафедри", () -> crudOperations.showDepartments(departmentRepository.getDepartments()), 1),
-                new CommandContainer("створити кафедру", crudOperations::addDepartment, 2),
-                new CommandContainer("видалити кафедру", crudOperations::deleteDepartment, 2),
-                new CommandContainer("редагуфати кафедру", crudOperations::updateDepartment, 2)
+                new CommandContainer("інформація про кафедри", () -> departmentOperations.showDepartments(departmentRepository.findAll()), 1),
+                new CommandContainer("створити кафедру", departmentOperations::addDepartment, 2),
+                new CommandContainer("видалити кафедру", departmentOperations::deleteDepartment, 2),
+                new CommandContainer("редагуфати кафедру", departmentOperations::updateDepartment, 2)
         ));
 
         proceedOption("Оберіть дію:", "повернутися", departmentCommands);
@@ -99,10 +107,10 @@ public class InputProcessor {
     /** Interacts with students */
     private void processStudent() {
         List<CommandContainer> studentCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про студентів", () -> crudOperations.showStudents(studentRepository.getStudents()), 1),
-                new CommandContainer("створити студента", crudOperations::addStudent, 2),
-                new CommandContainer("видалити студента", crudOperations::deleteStudent, 2),
-                new CommandContainer("редагуфати студента", crudOperations::updateStudent, 2),
+                new CommandContainer("інформація про студентів", () -> studentOperations.showStudents(studentRepository.findAll()), 1),
+                new CommandContainer("створити студента", studentOperations::addStudent, 2),
+                new CommandContainer("видалити студента", studentOperations::deleteStudent, 2),
+                new CommandContainer("редагуфати студента", studentOperations::updateStudent, 2),
                 new CommandContainer("перевести студента", transferOperations::transferStudentToDepartment, 2),
                 new CommandContainer("змінити курс студента", transferOperations::transferStudentToCourse, 2)
         ));
@@ -113,10 +121,10 @@ public class InputProcessor {
     /** Interacts with teachers */
     private void processTeacher() {
         List<CommandContainer> teacherCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про викладачів", () -> crudOperations.showTeachers(teacherRepository.getTeachers()), 1),
-                new CommandContainer("створити викладача", crudOperations::addTeacher, 2),
-                new CommandContainer("видалити викладача", crudOperations::deleteTeacher, 2),
-                new CommandContainer("редагуфати викладача", crudOperations::updateTeacher, 2)
+                new CommandContainer("інформація про викладачів", () -> teacherOperations.showTeachers(teacherRepository.findAll()), 1),
+                new CommandContainer("створити викладача", teacherOperations::addTeacher, 2),
+                new CommandContainer("видалити викладача", teacherOperations::deleteTeacher, 2),
+                new CommandContainer("редагуфати викладача", teacherOperations::updateTeacher, 2)
         ));
 
         proceedOption("Оберіть дію:", "повернутися", teacherCommands);

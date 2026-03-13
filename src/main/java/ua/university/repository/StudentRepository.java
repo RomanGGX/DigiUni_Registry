@@ -4,24 +4,17 @@ import ua.university.domain.Department;
 import ua.university.domain.Faculty;
 import ua.university.domain.Student;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
-public class StudentRepository {
-    private Student[] students;
+public class StudentRepository implements Repository<Student, Integer>{
 
-    public StudentRepository() {
-        students = new Student[0];
-    }
+    private final Map<Integer, Student> studentsById = new LinkedHashMap<>();
+    private final Set<String> emailIndex = new HashSet<>();
 
-    public void setStudents(Student[] initialStudents) {
-        this.students = initialStudents;
-    }
-
-    public Student[] getStudents() {
-        return students.clone();
+    @Override
+    public List<Student> findAll() {
+        return Collections.unmodifiableList(new ArrayList<>(studentsById.values()));
     }
 
     /**
@@ -30,7 +23,7 @@ public class StudentRepository {
      * @return Optional student if it finds, and optional empty if not
      */
     public Optional<Student> FindByFullName (String[] names) {
-        for (Student student : students) {
+        for (Student student : studentsById.values()) {
             if (student.getFirstName().equalsIgnoreCase(names[0])) {
                 if (student.getMiddleName().equalsIgnoreCase(names[1])) {
                     if (student.getLastName().equalsIgnoreCase(names[2])) return Optional.of(student);
@@ -40,13 +33,9 @@ public class StudentRepository {
         return Optional.empty();
     }
 
-    public Optional<Student> findById(int id) {
-        for (Student student : students) {
-            if (student.getId() == id) {
-                return Optional.of(student);
-            }
-        }
-        return Optional.empty();
+    @Override
+    public Optional<Student> findById(Integer id) {
+        return Optional.ofNullable(studentsById.get(id));
     }
 
     /**
@@ -57,7 +46,7 @@ public class StudentRepository {
     public List<Student> FindByCourse (int course) {
         List<Student> result = new ArrayList<>();
 
-        for (Student student : students) {
+        for (Student student : studentsById.values()) {
             if (course == student.getCourse()) result.add(student);
         }
         return result;
@@ -71,7 +60,7 @@ public class StudentRepository {
     public List<Student> FindByGroup (String group) {
         List<Student> result = new ArrayList<>();
 
-        for (Student student : students) {
+        for (Student student : studentsById.values()) {
             if (group.equalsIgnoreCase(student.getGroup())) result.add(student);
         }
         return result;
@@ -83,7 +72,7 @@ public class StudentRepository {
      * @return Optional student if it finds, and optional empty if not
      */
     public Optional<Student> FindByStudentID (String studentID) {
-        for (Student student : students) {
+        for (Student student : studentsById.values()) {
             if (studentID.equalsIgnoreCase(student.getStudentId())) return Optional.of(student);
         }
         return Optional.empty();
@@ -95,33 +84,33 @@ public class StudentRepository {
      * @return Optional student if it finds, and optional empty if not
      */
     public Optional<Student> FindByEmail (String email) {
-        for (Student student : students) {
+        for (Student student : studentsById.values()) {
             if (email.equalsIgnoreCase(student.getEmail())) return Optional.of(student);
         }
         return Optional.empty();
     }
 
-    public Student[] findByFaculty(Faculty faculty) {
+    public List<Student> findByFaculty(Faculty faculty) {
         List<Student> result = new ArrayList<>();
-        for (Student student : students) {
+        for (Student student : studentsById.values()) {
             if (student.getDepartment() != null &&
                     student.getDepartment().getFaculty() != null &&
                     student.getDepartment().getFaculty().getCode() == faculty.getCode()) {
                 result.add(student);
             }
         }
-        return result.toArray(new Student[0]);
+        return result;
     }
 
-    public Student[] findByDepartment(Department department) {
+    public List<Student> findByDepartment(Department department) {
         List<Student> result = new ArrayList<>();
-        for (Student student : students) {
+        for (Student student : studentsById.values()) {
             if (student.getDepartment() != null &&
                     student.getDepartment().getCode() == department.getCode()) {
                 result.add(student);
             }
         }
-        return result.toArray(new Student[0]);
+        return result;
     }
 
     /**
@@ -129,78 +118,47 @@ public class StudentRepository {
      * Creates a new array with increased size and appends the student to the end.
      * @param student the student to be added
      */
-    public void addStudent(Student student) {
-        Student[] newArray = new Student[students.length + 1];
-
-        for (int i = 0; i < students.length; i++) {
-            newArray[i] = students[i];
-        }
-
-        newArray[students.length] = student;
-
-        students = newArray;
+    @Override
+    public void add(Student student) {
+        studentsById.put(student.getId(), student);
+        emailIndex.add(student.getEmail().toLowerCase());
     }
 
-    /**
-     * Deletes a student from the repository by their ID.
-     * @param id the unique identifier of the student
-     * @return true if student was found and deleted, false otherwise
-     */
-    public boolean deleteStudentById(int id) {
-        boolean found = false;
-        for (Student student : students) {
-            if (student.getId() == id) {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            return false;
-        }
-
-        Student[] newArray = new Student[students.length - 1];
-
-        int newIndex = 0;
-        for (int i = 0; i < students.length; i++) {
-            if (students[i].getId() != id) {
-                newArray[newIndex] = students[i];
-                newIndex++;
-            }
-        }
-
-        students = newArray;
+    @Override
+    public boolean deleteById(Integer id) {
+        Student removed = studentsById.remove(id);
+        if (removed == null) return false;
+        emailIndex.remove(removed.getEmail().toLowerCase());
         return true;
     }
 
-    /**
-     * Deletes a student from the repository by their full name.
-     * @param names String array of first, middle and last names
-     * @return true if student was found and deleted, false otherwise
-     */
-    public boolean deleteStudentByFullName(String[] names) {
-        Optional<Student> studentOpt = this.FindByFullName(names);
-
+    public boolean deleteByFullName(String[] names) {
+        Optional<Student> studentOpt = FindByFullName(names);
         if (studentOpt.isPresent()) {
-            return deleteStudentById(studentOpt.get().getId());
+            return deleteById(studentOpt.get().getId());
         }
         return false;
     }
 
-    /**
-     * Updates an existing student's information in the repository.
-     * @param id the unique identifier of the student to update
-     * @param updatedStudent the student object with new information
-     * @return true if student was found and updated, false otherwise
-     */
-    public boolean updateStudent(int id, Student updatedStudent) {
-        for (int i = 0; i < students.length; i++) {
-            if (students[i].getId() == id) {
-                students[i] = updatedStudent;
-                return true;
+    @Override
+    public boolean update(Integer id, Student updated) {
+        Student existing = studentsById.get(id);
+        if (existing == null) return false;
+
+        String oldEmail = existing.getEmail().toLowerCase();
+        String newEmail = updated.getEmail().toLowerCase();
+
+        if (!oldEmail.equals(newEmail)) {
+            if (emailIndex.contains(newEmail)) {
+                throw new IllegalArgumentException(
+                        "Email '" + updated.getEmail() + "' вже використовується.");
             }
+            emailIndex.remove(oldEmail);
+            emailIndex.add(newEmail);
         }
-        return false;
+
+        studentsById.put(id, updated);
+        return true;
     }
 
     /**
@@ -210,9 +168,9 @@ public class StudentRepository {
      */
     public int getNextId() {
         int maxId = 0;
-        for (Student student : students) {
-            if (student.getId() > maxId) {
-                maxId = student.getId();
+        for (int id : studentsById.keySet()) {
+            if (id > maxId) {
+                maxId = id;
             }
         }
         return maxId + 1;

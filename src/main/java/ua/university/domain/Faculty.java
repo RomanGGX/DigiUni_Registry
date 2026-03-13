@@ -1,5 +1,7 @@
 package ua.university.domain;
 
+import java.util.Objects;
+
 public class Faculty {
     private int code;
     private String name;
@@ -64,5 +66,18 @@ public class Faculty {
                 ", dean=" + (dean != null ? dean.getFullName() : "не призначено") +
                 ", contacts='" + contacts + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Faculty)) return false;
+        Faculty other = (Faculty) o;
+        return this.code == other.code;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCode());
     }
 }
