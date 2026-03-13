@@ -83,7 +83,7 @@ public class InputProcessor {
     /** interacts with faculties */
     private void processFaculty() {
         List<CommandContainer> facultyCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про факультет", () -> facultyOperations.showFaculties(facultyRepository.getFaculties()), 1),
+                new CommandContainer("інформація про факультет", () -> facultyOperations.showFaculties(facultyRepository.findAll()), 1),
                 new CommandContainer("створити факультет", facultyOperations::addFaculty, 2),
                 new CommandContainer("видалити факультет", facultyOperations::deleteFaculty, 2),
                 new CommandContainer("редагуфати факультет", facultyOperations::updateFaculty, 2)
@@ -95,7 +95,7 @@ public class InputProcessor {
     /** Interacts with departments */
     private void processDepartment() {
         List<CommandContainer> departmentCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про кафедри", () -> departmentOperations.showDepartments(departmentRepository.getDepartments()), 1),
+                new CommandContainer("інформація про кафедри", () -> departmentOperations.showDepartments(departmentRepository.findAll()), 1),
                 new CommandContainer("створити кафедру", departmentOperations::addDepartment, 2),
                 new CommandContainer("видалити кафедру", departmentOperations::deleteDepartment, 2),
                 new CommandContainer("редагуфати кафедру", departmentOperations::updateDepartment, 2)
@@ -107,7 +107,7 @@ public class InputProcessor {
     /** Interacts with students */
     private void processStudent() {
         List<CommandContainer> studentCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про студентів", () -> studentOperations.showStudents(studentRepository.getStudents()), 1),
+                new CommandContainer("інформація про студентів", () -> studentOperations.showStudents(studentRepository.findAll()), 1),
                 new CommandContainer("створити студента", studentOperations::addStudent, 2),
                 new CommandContainer("видалити студента", studentOperations::deleteStudent, 2),
                 new CommandContainer("редагуфати студента", studentOperations::updateStudent, 2),
@@ -121,7 +121,7 @@ public class InputProcessor {
     /** Interacts with teachers */
     private void processTeacher() {
         List<CommandContainer> teacherCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про викладачів", () -> teacherOperations.showTeachers(teacherRepository.getTeachers()), 1),
+                new CommandContainer("інформація про викладачів", () -> teacherOperations.showTeachers(teacherRepository.findAll()), 1),
                 new CommandContainer("створити викладача", teacherOperations::addTeacher, 2),
                 new CommandContainer("видалити викладача", teacherOperations::deleteTeacher, 2),
                 new CommandContainer("редагуфати викладача", teacherOperations::updateTeacher, 2)

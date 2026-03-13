@@ -3,6 +3,7 @@ package ua.university.service;
 import ua.university.domain.*;
 import ua.university.repository.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -29,21 +30,21 @@ public class TransferOperations {
     public void transferStudentToDepartment() {
         System.out.println("---Переведення студента на іншу кафедру---");
 
-        Student[] allStudents = studentRepository.getStudents();
-        if (allStudents.length == 0) {
+        List<Student> allStudents = studentRepository.findAll();
+        if (allStudents.isEmpty()) {
             System.err.println("Немає студентів для переведення!");
             return;
         }
 
         System.out.println("\n=== Список студентів ===");
-        for (int i = 0; i < allStudents.length; i++) {
-            String facultyName = allStudents[i].getFaculty() != null ?
-                    allStudents[i].getFaculty().getShortName() : "немає";
-            String deptName = allStudents[i].getDepartment() != null ?
-                    allStudents[i].getDepartment().getName() : "немає";
-            System.out.println((i + 1) + ". [ID: " + allStudents[i].getId() + "] " +
-                    allStudents[i].getFullName() + " - Курс: " + allStudents[i].getCourse() +
-                    ", Група: " + allStudents[i].getGroup() +
+        for (int i = 0; i < allStudents.size(); i++) {
+            String facultyName = allStudents.get(i).getFaculty() != null ?
+                    allStudents.get(i).getFaculty().getShortName() : "немає";
+            String deptName = allStudents.get(i).getDepartment() != null ?
+                    allStudents.get(i).getDepartment().getName() : "немає";
+            System.out.println((i + 1) + ". [ID: " + allStudents.get(i).getId() + "] " +
+                    allStudents.get(i).getFullName() + " - Курс: " + allStudents.get(i).getCourse() +
+                    ", Група: " + allStudents.get(i).getGroup() +
                     " (" + facultyName + ", " + deptName + ")");
         }
 
@@ -121,8 +122,8 @@ public class TransferOperations {
         System.out.println("Курс: " + currentStudent.getCourse());
         System.out.println("Група: " + currentStudent.getGroup());
 
-        Faculty[] faculties = facultyRepository.getFaculties();
-        if (faculties.length == 0) {
+        List<Faculty> faculties = facultyRepository.findAll();
+        if (faculties.isEmpty()) {
             System.err.println("Немає факультетів!");
             return;
         }
@@ -132,8 +133,8 @@ public class TransferOperations {
 
         while (!facultySelected) {
             System.out.println("\n=== Оберіть новий факультет ===");
-            for (int i = 0; i < faculties.length; i++) {
-                System.out.println((i + 1) + ". " + faculties[i].getShortName() + " - " + faculties[i].getName());
+            for (int i = 0; i < faculties.size(); i++) {
+                System.out.println((i + 1) + ". " + faculties.get(i).getShortName() + " - " + faculties.get(i).getName());
             }
 
             System.out.print("Номер факультету: ");
@@ -146,19 +147,19 @@ public class TransferOperations {
 
             try {
                 int facultyChoice = Integer.parseInt(facultyInput);
-                if (facultyChoice >= 1 && facultyChoice <= faculties.length) {
-                    selectedFaculty = faculties[facultyChoice - 1];
+                if (facultyChoice >= 1 && facultyChoice <= faculties.size()) {
+                    selectedFaculty = faculties.get(facultyChoice - 1);
                     facultySelected = true;
                 } else {
-                    System.err.println("Невірний вибір! Оберіть номер від 1 до " + faculties.length);
+                    System.err.println("Невірний вибір! Оберіть номер від 1 до " + faculties.size());
                 }
             } catch (NumberFormatException e) {
                 System.err.println("Невірний формат! Введіть число.");
             }
         }
 
-        Department[] departments = departmentRepository.findByFaculty(selectedFaculty);
-        if (departments.length == 0) {
+        List<Department> departments = departmentRepository.findByFaculty(selectedFaculty);
+        if (departments.isEmpty()) {
             System.err.println("На цьому факультеті немає кафедр!");
             return;
         }
@@ -168,8 +169,8 @@ public class TransferOperations {
 
         while (!departmentSelected) {
             System.out.println("\n=== Оберіть нову кафедру ===");
-            for (int i = 0; i < departments.length; i++) {
-                System.out.println((i + 1) + ". " + departments[i].getName());
+            for (int i = 0; i < departments.size(); i++) {
+                System.out.println((i + 1) + ". " + departments.get(i).getName());
             }
 
             System.out.print("Номер кафедри: ");
@@ -182,11 +183,11 @@ public class TransferOperations {
 
             try {
                 int deptChoice = Integer.parseInt(deptInput);
-                if (deptChoice >= 1 && deptChoice <= departments.length) {
-                    selectedDepartment = departments[deptChoice - 1];
+                if (deptChoice >= 1 && deptChoice <= departments.size()) {
+                    selectedDepartment = departments.get(deptChoice - 1);
                     departmentSelected = true;
                 } else {
-                    System.err.println("Невірний вибір! Оберіть номер від 1 до " + departments.length);
+                    System.err.println("Невірний вибір! Оберіть номер від 1 до " + departments.size());
                 }
             } catch (NumberFormatException e) {
                 System.err.println("Невірний формат! Введіть число.");
@@ -210,7 +211,7 @@ public class TransferOperations {
                 selectedDepartment
         );
 
-        boolean updated = studentRepository.updateStudent(currentStudent.getId(), updatedStudent);
+        boolean updated = studentRepository.update(currentStudent.getId(), updatedStudent);
 
         if (updated) {
             System.out.println("\n Студента " + currentStudent.getFullName() + " успішно переведено!");
@@ -227,21 +228,21 @@ public class TransferOperations {
     public void transferStudentToCourse() {
         System.out.println("---Переведення студента на інший курс---");
 
-        Student[] allStudents = studentRepository.getStudents();
-        if (allStudents.length == 0) {
+        List<Student> allStudents = studentRepository.findAll();
+        if (allStudents.isEmpty()) {
             System.err.println("Немає студентів для переведення!");
             return;
         }
 
         System.out.println("\n=== Список студентів ===");
-        for (int i = 0; i < allStudents.length; i++) {
-            String facultyName = allStudents[i].getFaculty() != null ?
-                    allStudents[i].getFaculty().getShortName() : "немає";
-            String deptName = allStudents[i].getDepartment() != null ?
-                    allStudents[i].getDepartment().getName() : "немає";
-            System.out.println((i + 1) + ". [ID: " + allStudents[i].getId() + "] " +
-                    allStudents[i].getFullName() + " - Курс: " + allStudents[i].getCourse() +
-                    ", Група: " + allStudents[i].getGroup() +
+        for (int i = 0; i < allStudents.size(); i++) {
+            String facultyName = allStudents.get(i).getFaculty() != null ?
+                    allStudents.get(i).getFaculty().getShortName() : "немає";
+            String deptName = allStudents.get(i).getDepartment() != null ?
+                    allStudents.get(i).getDepartment().getName() : "немає";
+            System.out.println((i + 1) + ". [ID: " + allStudents.get(i).getId() + "] " +
+                    allStudents.get(i).getFullName() + " - Курс: " + allStudents.get(i).getCourse() +
+                    ", Група: " + allStudents.get(i).getGroup() +
                     " (" + facultyName + ", " + deptName + ")");
         }
 
@@ -366,7 +367,7 @@ public class TransferOperations {
                 currentStudent.getDepartment()
         );
 
-        boolean updated = studentRepository.updateStudent(currentStudent.getId(), updatedStudent);
+        boolean updated = studentRepository.update(currentStudent.getId(), updatedStudent);
 
         if (updated) {
             System.out.println("\n Студента " + currentStudent.getFullName() + " успішно переведено!");

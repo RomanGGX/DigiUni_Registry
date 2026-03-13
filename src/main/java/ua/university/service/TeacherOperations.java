@@ -5,8 +5,7 @@ import ua.university.domain.Faculty;
 import ua.university.domain.Teacher;
 import ua.university.repository.*;
 
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 public class TeacherOperations {
     private final Scanner scanner = new Scanner(System.in);
@@ -24,8 +23,8 @@ public class TeacherOperations {
     /*
     Displays teachers list
     */
-    public void showTeachers(Teacher[] teachers) {
-        if (teachers == null || teachers.length == 0) {
+    public void showTeachers(List<Teacher> teachers) {
+        if (teachers == null || teachers.isEmpty()) {
             System.out.println("Інформацію про викладачів не знайдено");
             return;
         }
@@ -89,7 +88,11 @@ public class TeacherOperations {
             if (email.equals("-1")) {
                 System.out.println("Невірний email. Приклад: example@ukma.edu.ua");
             }
-        } while (email.equals("-1"));
+            if (teacherRepository.findByEmail(email).isPresent()) {
+                System.out.println("Викладач з таким email вже існує. Введіть інший.");
+                email = "";
+            }
+        } while (email.isEmpty() || email.equals("-1"));
 
         String phoneNumber = "";
         do {
@@ -180,8 +183,8 @@ public class TeacherOperations {
             }
         } while (workload < 0);
 
-        Faculty[] faculties = facultyRepository.getFaculties();
-        if (faculties.length == 0) {
+        List<Faculty> faculties = facultyRepository.findAll();
+        if (faculties.isEmpty()) {
             System.err.println("Немає факультетів!");
             return;
         }
@@ -191,8 +194,8 @@ public class TeacherOperations {
 
         while (!facultySelected) {
             System.out.println("\n=== Оберіть факультет ===");
-            for (int i = 0; i < faculties.length; i++) {
-                System.out.println((i + 1) + ". " + faculties[i].getShortName() + " - " + faculties[i].getName());
+            for (int i = 0; i < faculties.size(); i++) {
+                System.out.println((i + 1) + ". " + faculties.get(i).getShortName() + " - " + faculties.get(i).getName());
             }
 
             System.out.print("Номер факультету: ");
@@ -205,19 +208,19 @@ public class TeacherOperations {
 
             try {
                 int facultyChoice = Integer.parseInt(facultyInput);
-                if (facultyChoice < 1 || facultyChoice > faculties.length) {
-                    System.err.println("Невірний вибір! Оберіть номер від 1 до " + faculties.length);
+                if (facultyChoice < 1 || facultyChoice > faculties.size()) {
+                    System.err.println("Невірний вибір! Оберіть номер від 1 до " + faculties.size());
                     continue;
                 }
-                selectedFaculty = faculties[facultyChoice - 1];
+                selectedFaculty = faculties.get(facultyChoice - 1);
                 facultySelected = true;
             } catch (NumberFormatException e) {
                 System.err.println("Невірний формат! Введіть число.");
             }
         }
 
-        Department[] departments = departmentRepository.findByFaculty(selectedFaculty);
-        if (departments.length == 0) {
+        List<Department> departments = departmentRepository.findByFaculty(selectedFaculty);
+        if (departments.isEmpty()) {
             System.err.println("На цьому факультеті немає кафедр!");
             return;
         }
@@ -227,8 +230,8 @@ public class TeacherOperations {
 
         while (!departmentSelected) {
             System.out.println("\n=== Оберіть кафедру ===");
-            for (int i = 0; i < departments.length; i++) {
-                System.out.println((i + 1) + ". " + departments[i].getName());
+            for (int i = 0; i < departments.size(); i++) {
+                System.out.println((i + 1) + ". " + departments.get(i).getName());
             }
 
             System.out.print("Номер кафедри: ");
@@ -241,11 +244,11 @@ public class TeacherOperations {
 
             try {
                 int deptChoice = Integer.parseInt(deptInput);
-                if (deptChoice < 1 || deptChoice > departments.length) {
-                    System.err.println("Невірний вибір! Оберіть номер від 1 до " + departments.length);
+                if (deptChoice < 1 || deptChoice > departments.size()) {
+                    System.err.println("Невірний вибір! Оберіть номер від 1 до " + departments.size());
                     continue;
                 }
-                selectedDepartment = departments[deptChoice - 1];
+                selectedDepartment = departments.get(deptChoice - 1);
                 departmentSelected = true;
             } catch (NumberFormatException e) {
                 System.err.println("Невірний формат! Введіть число.");
@@ -256,7 +259,7 @@ public class TeacherOperations {
                 phoneNumber, position, selectedDepartment, academicDegree, academicTitle,
                 employmentDate, workload);
 
-        teacherRepository.addTeacher(newTeacher);
+        teacherRepository.add(newTeacher);
 
         System.out.println("\nВикладача успішно додано!");
         System.out.println("\n---Інформація про створеного викладача---");
@@ -267,18 +270,18 @@ public class TeacherOperations {
     public void deleteTeacher() {
         System.out.println("---Видалити викладача---");
 
-        Teacher[] allTeachers = teacherRepository.getTeachers();
-        if (allTeachers.length == 0) {
+        List<Teacher> allTeachers = teacherRepository.findAll();
+        if (allTeachers.isEmpty()) {
             System.err.println("Немає викладачів для видалення!");
             return;
         }
 
         System.out.println("\n=== Список викладачів ===");
-        for (int i = 0; i < allTeachers.length; i++) {
-            String facultyName = allTeachers[i].getFaculty() != null ?
-                    allTeachers[i].getFaculty().getShortName() : "немає";
-            System.out.println((i + 1) + ". [ID: " + allTeachers[i].getId() + "] " +
-                    allTeachers[i].getFullName() + " - " + allTeachers[i].getPosition() +
+        for (int i = 0; i < allTeachers.size(); i++) {
+            String facultyName = allTeachers.get(i).getFaculty() != null ?
+                    allTeachers.get(i).getFaculty().getShortName() : "немає";
+            System.out.println((i + 1) + ". [ID: " + allTeachers.get(i).getId() + "] " +
+                    allTeachers.get(i).getFullName() + " - " + allTeachers.get(i).getPosition() +
                     " (" + facultyName + ")");
         }
 
@@ -337,7 +340,7 @@ public class TeacherOperations {
             return;
         }
 
-        boolean deleted = teacherRepository.deleteTeacherById(teacher.getId());
+        boolean deleted = teacherRepository.deleteById(teacher.getId());
         if (deleted) {
             System.out.println("Викладача " + teacher.getFullName() + " успішно видалено!");
         } else {
@@ -348,7 +351,7 @@ public class TeacherOperations {
     public void updateTeacher() {
         System.out.println("---Редагувати викладача---");
 
-        Teacher[] allTeachers = teacherRepository.getTeachers();
+        List<Teacher> allTeachers = teacherRepository.findAll();
         showTeachers(allTeachers);
 
         System.out.println("\nОберіть метод пошуку:");
@@ -602,8 +605,8 @@ public class TeacherOperations {
         Department selectedDepartment = currentTeacher.getDepartment();
 
         if (changeDept.equalsIgnoreCase("y")) {
-            Faculty[] faculties = facultyRepository.getFaculties();
-            if (faculties.length == 0) {
+            List<Faculty> faculties = facultyRepository.findAll();
+            if (faculties.isEmpty()) {
                 System.err.println("Немає факультетів!");
             } else {
                 Faculty selectedFaculty = null;
@@ -611,8 +614,8 @@ public class TeacherOperations {
 
                 while (!facultySelected) {
                     System.out.println("\n=== Оберіть факультет ===");
-                    for (int i = 0; i < faculties.length; i++) {
-                        System.out.println((i + 1) + ". " + faculties[i].getShortName() + " - " + faculties[i].getName());
+                    for (int i = 0; i < faculties.size(); i++) {
+                        System.out.println((i + 1) + ". " + faculties.get(i).getShortName() + " - " + faculties.get(i).getName());
                     }
                     System.out.print("Номер факультету: ");
                     String facultyInput = scanner.nextLine().trim();
@@ -624,27 +627,27 @@ public class TeacherOperations {
 
                     try {
                         int facultyChoice = Integer.parseInt(facultyInput);
-                        if (facultyChoice >= 1 && facultyChoice <= faculties.length) {
-                            selectedFaculty = faculties[facultyChoice - 1];
+                        if (facultyChoice >= 1 && facultyChoice <= faculties.size()) {
+                            selectedFaculty = faculties.get(facultyChoice - 1);
                             facultySelected = true;
                         } else {
-                            System.err.println("Невірний вибір! Оберіть номер від 1 до " + faculties.length);
+                            System.err.println("Невірний вибір! Оберіть номер від 1 до " + faculties.size());
                         }
                     } catch (NumberFormatException e) {
                         System.err.println("Невірний формат! Введіть число.");
                     }
                 }
 
-                Department[] departments = departmentRepository.findByFaculty(selectedFaculty);
-                if (departments.length == 0) {
+                List<Department> departments = departmentRepository.findByFaculty(selectedFaculty);
+                if (departments.isEmpty()) {
                     System.err.println("На цьому факультеті немає кафедр!");
                 } else {
                     boolean departmentSelected = false;
 
                     while (!departmentSelected) {
                         System.out.println("\n=== Оберіть кафедру ===");
-                        for (int i = 0; i < departments.length; i++) {
-                            System.out.println((i + 1) + ". " + departments[i].getName());
+                        for (int i = 0; i < departments.size(); i++) {
+                            System.out.println((i + 1) + ". " + departments.get(i).getName());
                         }
                         System.out.print("Номер кафедри: ");
                         String deptInput = scanner.nextLine().trim();
@@ -656,11 +659,11 @@ public class TeacherOperations {
 
                         try {
                             int deptChoice = Integer.parseInt(deptInput);
-                            if (deptChoice >= 1 && deptChoice <= departments.length) {
-                                selectedDepartment = departments[deptChoice - 1];
+                            if (deptChoice >= 1 && deptChoice <= departments.size()) {
+                                selectedDepartment = departments.get(deptChoice - 1);
                                 departmentSelected = true;
                             } else {
-                                System.err.println("Невірний вибір! Оберіть номер від 1 до " + departments.length);
+                                System.err.println("Невірний вибір! Оберіть номер від 1 до " + departments.size());
                             }
                         } catch (NumberFormatException e) {
                             System.err.println("Невірний формат! Введіть число.");
@@ -674,7 +677,7 @@ public class TeacherOperations {
                 newEmail, newPhoneNumber, newPosition, selectedDepartment, newAcademicDegree,
                 newAcademicTitle, newEmploymentDate, newWorkload);
 
-        boolean updated = teacherRepository.updateTeacher(id, updatedTeacher);
+        boolean updated = teacherRepository.update(id, updatedTeacher);
 
         if (updated) {
             System.out.println("\nВикладача успішно оновлено!");
