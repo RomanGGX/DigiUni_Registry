@@ -50,6 +50,13 @@ public class DepartmentRepository implements Repository<Department, Integer> {
         }
         return result;
     }
+    
+    public Optional<Department> findByCabinet(String cabinet) {
+        for (Department department : departmentsByCode.values()) {
+            if (cabinet.equals(department.getCabinet())) return Optional.of(department);
+        }
+        return Optional.empty();
+    }
 
     public int getNextCode() {
         int maxCode = 0;

@@ -1,162 +1,343 @@
 package ua.university.repository;
 
 import ua.university.domain.*;
+import ua.university.service.IOOperations;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Initializer {
-    public static void initializeAll(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository, UserRepository userRepository) {
 
-        //kma faculties
-        Faculty fi = new Faculty(1, "Факультет інформатики", "ФІ", null, "fi@ukma.edu.ua");
-        Faculty fen = new Faculty(2, "Факультет економічних наук", "ФЕН", null, "fen@ukma.edu.ua");
-        Faculty fcnct = new Faculty(3, "Факультет соціальних наук та соціальних технологій", "ФСНСТ", null, "fcnct@ukma.edu.ua");
+    /** Initializes all repositories */
+    public static void initializeAll(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository, UserRepository userRepository) throws IOException {
+        IOOperations ioOperations = new IOOperations(Path.of("data"), Path.of("data"));
 
-        Faculty[] faculties = {fi, fen, fcnct};
-        for (Faculty faculty : faculties) {
-            facultyRepository.add(faculty);
+        initializeFaculties(ioOperations, facultyRepository);
+        initializeDepartments(ioOperations, departmentRepository);
+        initializeStudents(ioOperations, studentRepository);
+        initializeTeachers(ioOperations, teacherRepository);
+
+        setDeansAndHeads(ioOperations, facultyRepository, departmentRepository, teacherRepository);
+        setFacultyForDepartment(ioOperations, departmentRepository, facultyRepository);
+        setDepartmentsForPersons(ioOperations, studentRepository, teacherRepository, departmentRepository);
+    }
+
+    /** Initializes faculties */
+    private static void initializeFaculties(IOOperations ioOperations, FacultyRepository facultyRepository) throws IOException {
+        Path path = ioOperations.getRunning();
+
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+
+            String line;
+            boolean facultiesSegment = false;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(".Faculties")) facultiesSegment = true;
+                else if (facultiesSegment) {
+                    if (line.startsWith("#")) {
+                        String[] segmentedLine = line.substring(1).split("#");
+
+                        int code = Integer.parseInt(segmentedLine[0]);
+                        String name = segmentedLine[1];
+                        String shortName = segmentedLine[2];
+                        String contacts = segmentedLine[4];
+
+                        facultyRepository.add(
+                                new Faculty(code, name, shortName, null, contacts)
+                        );
+                    } else break;
+                }
+            }
+        }
+    }
+
+    /** Initializes departments */
+    private static void initializeDepartments(IOOperations ioOperations, DepartmentRepository departmentRepository) throws IOException {
+        Path path = ioOperations.getRunning();
+
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+
+            String line;
+            boolean departmentsSegment = false;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(".Departments")) departmentsSegment = true;
+                else if (departmentsSegment) {
+                    if (line.startsWith("#")) {
+                        String[] segmentedLine = line.substring(1).split("#");
+
+                        int code = Integer.parseInt(segmentedLine[0]);
+                        String name = segmentedLine[1];
+                        String cabinet = segmentedLine[4];
+
+                        departmentRepository.add(
+                                new Department(code, name, null, null, cabinet)
+                        );
+                    } else break;
+                }
+            }
+        }
+    }
+
+    /** Initializes students */
+    private static void initializeStudents(IOOperations ioOperations, StudentRepository studentRepository) throws IOException {
+        Path path = ioOperations.getRunning();
+
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+
+            String line;
+            boolean studentsSegment = false;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(".Students")) studentsSegment = true;
+                else if (studentsSegment) {
+                    if (line.startsWith("#")) {
+                        String[] segmentedLine = line.substring(1).split("#");
+
+                        int id = Integer.parseInt(segmentedLine[0]);
+                        String firstName = segmentedLine[1];
+                        String middleName = segmentedLine[2];
+                        String lastName = segmentedLine[3];
+                        String birthDate = segmentedLine[4];
+                        String email = segmentedLine[5];
+                        String phoneNumber = segmentedLine[6];
+                        String studentId = segmentedLine[7];
+                        int course = Integer.parseInt(segmentedLine[8]);
+                        String group = segmentedLine[9];
+                        int yearEnroll = Integer.parseInt(segmentedLine[10]);
+                        String studyForm = segmentedLine[11];
+                        String status = segmentedLine[12];
+
+                        studentRepository.add(
+                                new Student(id, firstName, middleName, lastName, birthDate,
+                                        email, phoneNumber, studentId, course, group,
+                                        yearEnroll, studyForm, status, null)
+                        );
+                    } else break;
+                }
+            }
+        }
+    }
+
+    /** Initializes teachers */
+    private static void initializeTeachers(IOOperations ioOperations, TeacherRepository teacherRepository) throws IOException {
+        Path path = ioOperations.getRunning();
+
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+
+            String line;
+            boolean teachersSegment = false;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(".Teachers")) teachersSegment = true;
+                else if (teachersSegment) {
+                    if (line.startsWith("#")) {
+                        String[] segmentedLine = line.substring(1).split("#");
+
+                        int id = Integer.parseInt(segmentedLine[0]);
+                        String firstName = segmentedLine[1];
+                        String middleName = segmentedLine[2];
+                        String lastName = segmentedLine[3];
+                        String birthDate = segmentedLine[4];
+                        String email = segmentedLine[5];
+                        String phoneNumber = segmentedLine[6];
+                        String position = segmentedLine[7];
+                        String academicDegree = segmentedLine[9];
+                        String academicTitle = segmentedLine[10];
+                        String employmentDate = segmentedLine[11];
+                        double workload = Double.parseDouble(segmentedLine[12]);
+
+                        teacherRepository.add(
+                                new Teacher(id, firstName, middleName, lastName, birthDate,
+                                        email, phoneNumber, position, null,
+                                        academicDegree, academicTitle, employmentDate,
+                                        workload)
+                        );
+                    } else break;
+                }
+            }
+        }
+    }
+
+    /** Sets deans and heads for faculties and departments */
+    private static void setDeansAndHeads(IOOperations ioOperations, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository) throws IOException {
+        for (Faculty f : facultyRepository.findAll()) {
+            Teacher teacher = teacherRepository.findByEmail(getDeanEmailForFaculty(ioOperations, f)).orElse(null);
+            try {
+                facultyRepository.findById(f.getCode()).orElse(null).setDean(teacher);
+            } catch (NullPointerException ex) {
+                // Add logger for faculty not found. Level error
+            }
+            facultyRepository.update(f.getCode(), f);
         }
 
-        //department examples
-        Department dm = new Department(1, "Кафедра математики", fi, null, "1-100");
-        Department di = new Department(2, "Кафедра інформатики", fi, null, "1-201");
-        Department df = new Department(3, "Кафедра фінансів", fen, null, "3-205");
-        Department det = new Department(4, "Кафедра економічної теорії", fen, null, "2-102");
-        Department po = new Department(5, "Кафедра політології", fcnct, null, "10-110");
-        Department so = new Department(6, "Кафедра соціології", fcnct, null, "6-201");
+        for (Department d : departmentRepository.findAll()) {
+            Teacher teacher = teacherRepository.findByEmail(getHeadEmailForDepartment(ioOperations, d)).orElse(null);
+            try {
+                departmentRepository.findById(d.getCode()).orElse(null).setHead(teacher);
+            } catch (NullPointerException ex) {
+                // Add logger for department not found. Level error
+            }
+            departmentRepository.update(d.getCode(), d);
+        }
+    }
 
-        Department[] departments = {dm, di, df, det, po, so};
-        for (Department department : departments) {
-            departmentRepository.add(department);
+    /** Sets faculties for departments */
+    private static void setFacultyForDepartment(IOOperations ioOperations, DepartmentRepository departmentRepository, FacultyRepository facultyRepository) throws IOException {
+        for (Department d : departmentRepository.findAll()) {
+            Faculty faculty = facultyRepository.findByShortName(getFacultyShortNameForDepartment(ioOperations, d)).orElse(null);
+            try {
+                departmentRepository.findById(d.getCode()).orElse(null).setFaculty(faculty);
+            } catch (NullPointerException ex) {
+                // Add logger for department not found. Level error
+            }
+            departmentRepository.update(d.getCode(), d);
+        }
+    }
+
+    /** Sets departments for students and teachers */
+    private static void setDepartmentsForPersons(IOOperations ioOperations, StudentRepository studentRepository, TeacherRepository teacherRepository, DepartmentRepository departmentRepository) throws IOException {
+        for (Student s : studentRepository.findAll()) {
+            Department department = departmentRepository.findByCabinet(getDepartmentCabinetForStudent(ioOperations, s)).orElse(null);
+            try {
+                studentRepository.findById(s.getId()).orElse(null).setDepartment(department);
+            } catch (NullPointerException ex) {
+                // Add logger for student not found. Level error
+            }
+            studentRepository.update(s.getId(), s);
         }
 
-        //Student examples
-        Student st1 = new Student(1, "Іван", "Іванович", "Шевченко", "02.03.2007",
-                "ivan@gmail.com", "+380534386432", "3F34AB", 1, "42B",
-                2025, "бюджет", "навчається", dm);
+        for (Teacher t : teacherRepository.findAll()) {
+            Department department = departmentRepository.findByCabinet(getDepartmentCabinetForTeacher(ioOperations, t)).orElse(null);
+            try {
+                teacherRepository.findById(t.getId()).orElse(null).setDepartment(department);
+            } catch (NullPointerException ex) {
+                // Add logger for teacher not found. Level error
+            }
+            teacherRepository.update(t.getId(), t);
+        }
+    }
 
-        Student st2 = new Student(2, "Марія", "Ігорівна", "Мельник", "18.11.2006",
-                "maria@gmail.com", "+380839301980", "1K91AB", 3, "10B",
-                2023, "контракт", "навчається", dm);
+    /** Gets dean email from file for faculty */
+    private static String getDeanEmailForFaculty(IOOperations ioOperations, Faculty faculty) throws IOException {
+        Path path = ioOperations.getRunning();
 
-        Student st3 = new Student(3, "Андрій", "Сергійович", "Бондаренко", "21.01.2007",
-                "andrii@gmail.com", "+380671234567", "9Q77EF", 1, "12C",
-                2025, "бюджет", "навчається", di);
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 
-        Student st4 = new Student(4, "Катерина", "Володимирівна", "Романюк", "30.05.2006",
-                "kateryna@gmail.com", "+380931112244", "2T10GH", 3, "15B",
-                2023, "контракт", "навчається", di);
+            String line;
+            boolean facultiesSegment = false;
 
-        Student st5 = new Student(5, "Дмитро", "Олександрович", "Гриценко", "09.12.2006",
-                "dmytro@gmail.com", "+380991234111", "4A88JK", 2, "20D",
-                2024, "бюджет", "навчається", dm);
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(".Faculties")) facultiesSegment = true;
+                else if (facultiesSegment) {
+                    if (line.startsWith("#")) {
+                        String[] segmentedLine = line.substring(1).split("#");
 
-        Student st6 = new Student(6, "Софія", "Андріївна", "Ткаченко", "17.04.2007",
-                "sofia@gmail.com", "+380631234222", "6B12LM", 1, "21A",
-                2025, "контракт", "навчається", df);
-
-        Student st7 = new Student(7, "Максим", "Ігорович", "Литвин", "03.02.2006",
-                "maksym@gmail.com", "+380731234333", "8C55NP", 4, "30B",
-                2022, "контракт", "навчається", det);
-
-        Student st8 = new Student(8, "Наталія", "Миколаївна", "Савчук", "26.09.2007",
-                "nataliia@gmail.com", "+380501234444", "5D19RS", 1, "31C",
-                2025, "бюджет", "навчається", det);
-
-        Student st9 = new Student(9, "Марія", "Ігорівна", "Мельник", "18.11.2006",
-                "maria2@gmail.com", "+380839301980", "1K91AB", 3, "10B",
-                2023, "контракт", "навчається", po);
-
-        Student st10 = new Student(10, "Богдан", "Віталійович", "Сидоренко", "11.06.2007",
-                "bohdan@gmail.com", "+380681234555", "3E73TU", 1, "11A",
-                2025, "бюджет", "навчається", po);
-
-        Student st11 = new Student(11, "Юлія", "Романівна", "Олійник", "07.07.2006",
-                "yuliia@gmail.com", "+380951234666", "7F20VW", 2, "50A",
-                2024, "контракт", "навчається", so);
-
-        Student st12 = new Student(12, "Тарас", "Михайлович", "Кравченко", "28.10.2007",
-                "taras@gmail.com", "+380661234777", "9G14XY", 1, "51B",
-                2025, "бюджет", "навчається", so);
-
-        Student[] students = {st1, st2, st3, st4, st5, st6, st7, st8, st9, st10, st11, st12};
-        for (Student student : students) {
-            studentRepository.add(student);
+                        if (Integer.parseInt(segmentedLine[0]) - faculty.getCode() == 0) return segmentedLine[3];
+                    } else break;
+                }
+            }
         }
 
-        //Teacher examples
-        Teacher teacher1 = new Teacher(1, "Олександр", "Петрович", "Коваленко", "15.03.1975",
-                "kovalenko@ukma.edu.ua", "+380501234567", "професор",
-                dm, "д.т.н.", "професор", "07.11.2015", 250.0);
+        return null;
+    }
 
-        Teacher teacher2 = new Teacher(2, "Ірина", "Михайлівна", "Соловей", "09.10.1982",
-                "solovei@ukma.edu.ua", "+380503456789", "доцент",
-                dm, "к.ф.-м.н.", "доцент", "14.09.2011", 220.0);
+    /** Gets head email from file for department */
+    private static String getHeadEmailForDepartment(IOOperations ioOperations, Department department) throws IOException {
+        Path path = ioOperations.getRunning();
 
-        Teacher teacher3 = new Teacher(3, "Артем", "Валерійович", "Паламарчук", "28.01.1978",
-                "palamarchuk@ukma.edu.ua", "+380504567890", "професор",
-                di, "д.т.н.", "професор", "03.03.2013", 300.0);
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 
-        Teacher teacher4 = new Teacher(4, "Оксана", "Сергіївна", "Гнатюк", "16.05.1985",
-                "hnatiuk@ukma.edu.ua", "+380505678901", "старший викладач",
-                di, "к.т.н.", "старший викладач", "01.09.2016", 190.0);
+            String line;
+            boolean departmentsSegment = false;
 
-        Teacher teacher5 = new Teacher(5, "Віктор", "Олегович", "Руденко", "02.12.1974",
-                "rudenko@ukma.edu.ua", "+380506789012", "професор",
-                df, "д.е.н.", "професор", "12.02.2010", 280.0);
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(".Departments")) departmentsSegment = true;
+                else if (departmentsSegment) {
+                    if (line.startsWith("#")) {
+                        String[] segmentedLine = line.substring(1).split("#");
 
-        Teacher teacher6 = new Teacher(6, "Тетяна", "Юріївна", "Марченко", "19.04.1981",
-                "marchenko@ukma.edu.ua", "+380507890123", "доцент",
-                df, "к.е.н.", "доцент", "05.09.2012", 210.0);
-
-        Teacher teacher7 = new Teacher(7, "Сергій", "Анатолійович", "Клименко", "11.06.1977",
-                "klymenko@ukma.edu.ua", "+380508901234", "професор",
-                det, "д.е.н.", "професор", "20.10.2008", 260.0);
-
-        Teacher teacher8 = new Teacher(8, "Людмила", "Павлівна", "Яценко", "24.08.1986",
-                "yatsenko@ukma.edu.ua", "+380509012345", "доцент",
-                det, "к.е.н.", "доцент", "15.01.2017", 200.0);
-
-        Teacher teacher9 = new Teacher(9, "Наталія", "Іванівна", "Шевченко", "22.07.1980",
-                "shevchenko@ukma.edu.ua", "+380502345678", "доцент",
-                po, "к.т.н.", "доцент", "11.02.2009", 430.0);
-
-        Teacher teacher10 = new Teacher(10, "Ігор", "Степанович", "Левченко", "13.09.1979",
-                "levchenko@ukma.edu.ua", "+380501119988", "старший викладач",
-                po, "к.політ.н.", "старший викладач", "01.09.2014", 240.0);
-
-        Teacher teacher11 = new Teacher(11, "Марина", "Олександрівна", "Кузьменко", "05.01.1983",
-                "kuzmenko@ukma.edu.ua", "+380501223344", "доцент",
-                so, "к.соц.н.", "доцент", "10.03.2012", 205.0);
-
-        Teacher teacher12 = new Teacher(12, "Павло", "Іванович", "Данилюк", "27.11.1976",
-                "danilyuk@ukma.edu.ua", "+380501334455", "професор",
-                so, "д.соц.н.", "професор", "18.09.2007", 255.0);
-
-        Teacher[] teachers = {
-                teacher1, teacher2, teacher3, teacher4, teacher5, teacher6,
-                teacher7, teacher8, teacher9, teacher10, teacher11, teacher12
-        };
-        for(Teacher teacher : teachers) {
-            teacherRepository.add(teacher);
+                        if (Integer.parseInt(segmentedLine[0]) - department.getCode() == 0) return segmentedLine[3];
+                    } else break;
+                }
+            }
         }
 
-        fi.setDean(teacher1);
-        fen.setDean(teacher2);
+        return null;
+    }
 
-        facultyRepository.update(fi.getCode(), fi);
-        facultyRepository.update(fen.getCode(), fen);
+    /** gets faculty short name for department */
+    private static String getFacultyShortNameForDepartment(IOOperations ioOperations, Department department) throws IOException {
+        Path path = ioOperations.getRunning();
 
-        po.setHead(teacher3);
-        so.setHead(teacher4);
-        det.setHead(teacher5);
-        dm.setHead(teacher6);
-        df.setHead(teacher7);
-        di.setHead(teacher8);
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
 
-        departmentRepository.update(po.getCode(), po);
-        departmentRepository.update(so.getCode(), so);
-        departmentRepository.update(det.getCode(), det);
-        departmentRepository.update(dm.getCode(), dm);
-        departmentRepository.update(df.getCode(), df);
-        departmentRepository.update(di.getCode(), di);
+            String line;
+            boolean departnemtsSegment = false;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(".Departments")) departnemtsSegment = true;
+                else if (departnemtsSegment) {
+                    if (line.startsWith("#")) {
+                        String[] segmentedLine = line.substring(1).split("#");
+
+                        if (Integer.parseInt(segmentedLine[0]) - department.getCode() == 0) return segmentedLine[2];
+                    } else break;
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    /** Gets department cabinet for student */
+    private static String getDepartmentCabinetForStudent(IOOperations ioOperations, Student student) throws IOException {
+        Path path = ioOperations.getRunning();
+
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+
+            String line;
+            boolean studentsSegment = false;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(".Students")) studentsSegment = true;
+                else if (studentsSegment) {
+                    if (line.startsWith("#")) {
+                        String[] segmentedLine = line.substring(1).split("#");
+
+                        if (Integer.parseInt(segmentedLine[0]) - student.getId() == 0) return segmentedLine[13];
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /** Gets department cabinet for teacher */
+    private static String getDepartmentCabinetForTeacher(IOOperations ioOperations, Teacher teacher) throws  IOException {
+        Path path = ioOperations.getRunning();
+
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+
+            String line;
+            boolean teachersSegment = false;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.equals(".Teachers")) teachersSegment = true;
+                else if (teachersSegment) {
+                    if (line.startsWith("#")) {
+                        String[] segmentedLine = line.substring(1).split("#");
+
+                        if (Integer.parseInt(segmentedLine[0]) - teacher.getId() == 0) return segmentedLine[8];
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }

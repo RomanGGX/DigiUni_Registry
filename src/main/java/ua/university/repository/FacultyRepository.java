@@ -19,6 +19,12 @@ public class FacultyRepository implements Repository<Faculty, Integer> {
         return Optional.ofNullable(facultiesByCode.get(code));
     }
 
+    public Optional<Faculty> findByShortName(String shortName) {
+        return facultiesByCode.values().stream()
+                .filter(o -> o.getShortName().equals(shortName))
+                .findFirst();
+    }
+
         @Override
     public void add(Faculty faculty) {
         if (facultiesByCode.containsKey(faculty.getCode())) {

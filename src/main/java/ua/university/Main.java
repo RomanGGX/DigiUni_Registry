@@ -1,6 +1,10 @@
 package ua.university;
 import ua.university.repository.*;
+import ua.university.service.IOOperations;
 import ua.university.ui.InputProcessor;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class Main {
 
@@ -17,7 +21,26 @@ public class Main {
     private enum AccessLevel {user, manager, admin}
 
     public static void main(String[] args) {
-        Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
+        //Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
+
+        System.out.println("Ініціалізація шляху до бази даних");
+        try {
+            IOOperations ioOperations = new IOOperations(Path.of("data"), Path.of("data"));
+            ioOperations.copyStableToRunning();
+            System.out.println("Інціалізація успішна");
+        } catch (IOException ex) {
+            System.out.println("Не вдалося ініціалізувати шлях до бази даних\nЗавершення програми");
+            return;
+        }
+
+        System.out.println("Ініціалізація репозиторіїв");
+        try {
+            Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
+            System.out.println("Ініціалізація успішна\n\n\n");
+        } catch (IOException ex) {
+            System.out.println("Не вдалося ініціалізувати репозиторії\nЗавершення програми");
+            return;
+        }
 
         System.out.println();
         System.out.println("╔════════════════════════════════════════════╗");
