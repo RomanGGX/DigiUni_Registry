@@ -1,8 +1,17 @@
 package ua.university.domain;
 
-import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        scope = Teacher.class
+)
 public class Teacher extends Person{
     private String position;
     private Department department;
@@ -10,6 +19,8 @@ public class Teacher extends Person{
     private String academicTitle;
     private String employmentDate;
     private double workload;
+
+    public Teacher() {}
 
     public Teacher(int id, String firstName, String middleName, String lastName, String birthDate, String email, String phoneNumber,
                    String position,  Department department, String academicDegree, String academicTitle, String employmentDate, double workload){

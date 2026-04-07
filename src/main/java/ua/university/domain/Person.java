@@ -1,5 +1,13 @@
 package ua.university.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        scope = Person.class
+)
 public abstract class Person {
     private int id;
     private String firstName;
@@ -8,6 +16,8 @@ public abstract class Person {
     private String birthDate;
     private String email;
     private String phoneNumber;
+
+    public Person() {}
 
     public Person(int id, String firstName, String middleName, String lastName, String birthDate, String email, String phoneNumber) {
         this.id = id;

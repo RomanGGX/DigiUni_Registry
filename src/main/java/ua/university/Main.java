@@ -23,9 +23,10 @@ public class Main {
     public static void main(String[] args) {
         //Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
 
+        Path dataPath = Path.of("src", "main", "resources", "data");
         System.out.println("Ініціалізація шляху до бази даних");
         try {
-            IOOperations ioOperations = new IOOperations(Path.of("data"), Path.of("data"));
+            IOOperations ioOperations = new IOOperations(dataPath, dataPath);
             ioOperations.copyStableToRunning();
             System.out.println("Інціалізація успішна");
         } catch (IOException ex) {
@@ -35,7 +36,7 @@ public class Main {
 
         System.out.println("Ініціалізація репозиторіїв");
         try {
-            Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
+            Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository, dataPath);
             System.out.println("Ініціалізація успішна\n\n\n");
         } catch (IOException ex) {
             System.out.println("Не вдалося ініціалізувати репозиторії\nЗавершення програми");

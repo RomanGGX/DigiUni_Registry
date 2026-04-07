@@ -1,0 +1,107 @@
+[ {
+  "code" : 1,
+  "name" : "Факультет інформатики",
+  "shortName" : "ФІ",
+  "dean" : {
+    "id" : 1,
+    "firstName" : "Олександр",
+    "middleName" : "Петрович",
+    "lastName" : "Коваленко",
+    "birthDate" : "15.03.1975",
+    "email" : "kovalenko@ukma.edu.ua",
+    "phoneNumber" : "+380501234567",
+    "position" : "професор",
+    "department" : {
+      "code" : 1,
+      "name" : "Кафедра математики",
+      "faculty" : 1,
+      "head" : {
+        "id" : 6,
+        "firstName" : "Тетяна",
+        "middleName" : "Юріївна",
+        "lastName" : "Марченко",
+        "birthDate" : "19.04.1981",
+        "email" : "marchenko@ukma.edu.ua",
+        "phoneNumber" : "+380507890123",
+        "position" : "доцент",
+        "department" : {
+          "code" : 3,
+          "name" : "Кафедра фінансів",
+          "faculty" : {
+            "code" : 2,
+            "name" : "Факультет економічних наук",
+            "shortName" : "ФЕН",
+            "dean" : {
+              "id" : 2,
+              "firstName" : "Ірина",
+              "middleName" : "Михайлівна",
+              "lastName" : "Соловей",
+              "birthDate" : "09.10.1982",
+              "email" : "solovei@ukma.edu.ua",
+              "phoneNumber" : "+380503456789",
+              "position" : "доцент",
+              "department" : 1,
+              "academicDegree" : "к.ф.-м.н.",
+              "academicTitle" : "доцент",
+              "employmentDate" : "14.09.2011",
+              "workload" : 220.0
+            },
+            "contacts" : "fen@ukma.edu.ua"
+          },
+          "head" : {
+            "id" : 7,
+            "firstName" : "Сергій",
+            "middleName" : "Анатолійович",
+            "lastName" : "Клименко",
+            "birthDate" : "11.06.1977",
+            "email" : "klymenko@ukma.edu.ua",
+            "phoneNumber" : "+380508901234",
+            "position" : "професор",
+            "department" : {
+              "code" : 4,
+              "name" : "Кафедра економічної теорії",
+              "faculty" : 2,
+              "head" : {
+                "id" : 5,
+                "firstName" : "Віктор",
+                "middleName" : "Олегович",
+                "lastName" : "Руденко",
+                "birthDate" : "02.12.1974",
+                "email" : "rudenko@ukma.edu.ua",
+                "phoneNumber" : "+380506789012",
+                "position" : "професор",
+                "department" : 3,
+                "academicDegree" : "д.е.н.",
+                "academicTitle" : "професор",
+                "employmentDate" : "12.02.2010",
+                "workload" : 280.0
+              },
+              "cabinet" : "2-102"
+            },
+            "academicDegree" : "д.е.н.",
+            "academicTitle" : "професор",
+            "employmentDate" : "20.10.2008",
+            "workload" : 260.0
+          },
+          "cabinet" : "3-205"
+        },
+        "academicDegree" : "к.е.н.",
+        "academicTitle" : "доцент",
+        "employmentDate" : "05.09.2012",
+        "workload" : 210.0
+      },
+      "cabinet" : "1-100"
+    },
+    "academicDegree" : "д.т.н.",
+    "academicTitle" : "професор",
+    "employmentDate" : "07.11.2015",
+    "workload" : 250.0
+  },
+  "contacts" : "fi@ukma.edu.ua"
+}, 2, {
+  "code" : 3,
+  "name" : "Факультет соціальних наук та соціальних технологій",
+  "shortName" : "ФСНСТ",
+  "dean" : null,
+  "contacts" : "fcnct@ukma.edu.ua"
+} ]

@@ -1,13 +1,23 @@
 package ua.university.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import java.util.Objects;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "code",
+        scope = Department.class
+)
 public class Department {
     private int code;
     private String name;
     private Faculty faculty;
     private Teacher head;
     private String cabinet;
+
+    public Department() {}
 
     public Department(int code, String name, Faculty faculty, Teacher head, String cabinet) {
         this.code = code;

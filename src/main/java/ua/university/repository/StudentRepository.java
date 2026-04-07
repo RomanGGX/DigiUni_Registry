@@ -1,12 +1,13 @@
 package ua.university.repository;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ua.university.domain.Department;
 import ua.university.domain.Faculty;
 import ua.university.domain.Student;
 
 import java.util.*;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StudentRepository implements Repository<Student, Integer>{
 
     private final Map<Integer, Student> studentsById = new LinkedHashMap<>();
