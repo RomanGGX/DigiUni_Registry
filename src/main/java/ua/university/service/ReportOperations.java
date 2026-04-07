@@ -401,27 +401,15 @@ public class ReportOperations {
             return;
         }
 
-        teachers.sort(new Comparator<Teacher>() {
-            @Override
-            public int compare(Teacher t1, Teacher t2) {
-                int lastNameCompare = t1.getLastName().compareTo(t2.getLastName());
-                if (lastNameCompare != 0) {
-                    return lastNameCompare;
-                }
-                int firstNameCompare = t1.getFirstName().compareTo(t2.getFirstName());
-                if (firstNameCompare != 0) {
-                    return firstNameCompare;
-                }
-                return t1.getMiddleName().compareTo(t2.getMiddleName());
-            }
-        });
-
         System.out.println("\n=== Викладачі кафедри " + selectedDepartment.getName() + " (за алфавітом) ===");
-        for (Teacher teacher : teachers) {
-            System.out.println("[ID: " + teacher.getId() + "] " + teacher.getFullName() +
-                    ", Посада: " + teacher.getPosition() +
-                    ", Науковий ступінь: " + teacher.getAcademicDegree());
-        }
+        teachers.stream()
+                .sorted(Comparator.comparing(Teacher::getLastName)
+                        .thenComparing(Teacher::getFirstName)
+                        .thenComparing(Teacher::getMiddleName))
+                .forEach(teacher -> System.out.println("[ID: " + teacher.getId() + "] " + teacher.getFullName() +
+                        ", Посада: " + teacher.getPosition() +
+                        ", Науковий ступінь: " + teacher.getAcademicDegree()));
+
         System.out.println("\nВсього викладачів на кафедрі: " + teachers.size());
     }
 
@@ -489,36 +477,26 @@ public class ReportOperations {
             }
         } while (course == 0);
 
-        List<Student> allStudents = studentRepository.findByDepartment(selectedDepartment);
+        int finalCourse = course;
+        List<Student> filteredStudents = studentRepository.findByDepartment(selectedDepartment).stream()
+                .filter(s -> s.getCourse() == finalCourse)
+                .toList();
 
-        int count = 0;
-        for (Student s : allStudents) {
-            if (s.getCourse() == course) {
-                count++;
-            }
-        }
-
-        if (count == 0) {
+        if (filteredStudents.isEmpty()) {
             System.err.println("На кафедрі " + selectedDepartment.getName() +
                     " немає студентів на курсі " + course + "!");
             return;
         }
 
-        Student[] filteredStudents = new Student[count];
-        int index = 0;
-        for (Student s : allStudents) {
-            if (s.getCourse() == course) {
-                filteredStudents[index++] = s;
-            }
-        }
-
         System.out.println("\n=== Студенти кафедри " + selectedDepartment.getName() +
                 ", курс " + course + " ===");
-        for (Student student : filteredStudents) {
-            System.out.println("[ID: " + student.getId() + "] " + student.getFullName() +
-                    ", Група: " + student.getGroup());
-        }
-        System.out.println("\nВсього студентів: " + filteredStudents.length);
+
+        filteredStudents.forEach(student ->
+                System.out.println("[ID: " + student.getId() + "] " + student.getFullName() +
+                        ", Група: " + student.getGroup())
+        );
+
+        System.out.println("\nВсього студентів: " + filteredStudents.size());
     }
 
     /**
@@ -585,50 +563,27 @@ public class ReportOperations {
             }
         } while (course == 0);
 
-        List<Student> allStudents = studentRepository.findByDepartment(selectedDepartment);
+        int finalCourse = course;
+        List<Student> filteredStudents = studentRepository.findByDepartment(selectedDepartment).stream()
+                .filter(s -> s.getCourse() == finalCourse)
+                .sorted(Comparator.comparing(Student::getLastName)
+                        .thenComparing(Student::getFirstName)
+                        .thenComparing(Student::getMiddleName))
+                .toList();
 
-        int count = 0;
-        for (Student s : allStudents) {
-            if (s.getCourse() == course) {
-                count++;
-            }
-        }
-
-        if (count == 0) {
+        if (filteredStudents.isEmpty()) {
             System.err.println("На кафедрі " + selectedDepartment.getName() +
                     " немає студентів на курсі " + course + "!");
             return;
         }
 
-        Student[] filteredStudents = new Student[count];
-        int index = 0;
-        for (Student s : allStudents) {
-            if (s.getCourse() == course) {
-                filteredStudents[index++] = s;
-            }
-        }
-
-        Arrays.sort(filteredStudents, new Comparator<Student>() {
-            @Override
-            public int compare(Student s1, Student s2) {
-                int lastNameCompare = s1.getLastName().compareTo(s2.getLastName());
-                if (lastNameCompare != 0) {
-                    return lastNameCompare;
-                }
-                int firstNameCompare = s1.getFirstName().compareTo(s2.getFirstName());
-                if (firstNameCompare != 0) {
-                    return firstNameCompare;
-                }
-                return s1.getMiddleName().compareTo(s2.getMiddleName());
-            }
-        });
-
         System.out.println("\n=== Студенти кафедри " + selectedDepartment.getName() +
                 ", курс " + course + " (за алфавітом) ===");
-        for (Student student : filteredStudents) {
-            System.out.println("[ID: " + student.getId() + "] " + student.getFullName() +
-                    ", Група: " + student.getGroup());
-        }
-        System.out.println("\nВсього студентів: " + filteredStudents.length);
+
+        filteredStudents.forEach(student ->
+                System.out.println("[ID: " + student.getId() + "] " + student.getFullName() +
+                        ", Група: " + student.getGroup())
+        );
+        System.out.println("\nВсього студентів: " + filteredStudents.size());
     }
 }
