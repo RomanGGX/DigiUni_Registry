@@ -36,11 +36,11 @@ public class UniversityOperations {
 
         String newFullName = "";
         do {
-            System.out.print("Повна назва [" + currentUniversity.getFullName() + "]: ");
+            System.out.print("Повна назва [" + currentUniversity.fullName() + "]: ");
             newFullName = scanner.nextLine().trim();
 
             if (newFullName.equalsIgnoreCase("s") || newFullName.isEmpty()) {
-                newFullName = currentUniversity.getFullName();
+                newFullName = currentUniversity.fullName();
                 break;
             }
 
@@ -51,11 +51,11 @@ public class UniversityOperations {
 
         String newShortName = "";
         do {
-            System.out.print("Скорочена назва [" + currentUniversity.getShortName() + "]: ");
+            System.out.print("Скорочена назва [" + currentUniversity.shortName() + "]: ");
             newShortName = scanner.nextLine().trim();
 
             if (newShortName.equalsIgnoreCase("s") || newShortName.isEmpty()) {
-                newShortName = currentUniversity.getShortName();
+                newShortName = currentUniversity.shortName();
                 break;
             }
 
@@ -66,11 +66,11 @@ public class UniversityOperations {
 
         String newCity = "";
         do {
-            System.out.print("Місто [" + currentUniversity.getCity() + "]: ");
+            System.out.print("Місто [" + currentUniversity.city() + "]: ");
             newCity = scanner.nextLine().trim();
 
             if (newCity.equalsIgnoreCase("s") || newCity.isEmpty()) {
-                newCity = currentUniversity.getCity();
+                newCity = currentUniversity.city();
                 break;
             }
 
@@ -81,11 +81,11 @@ public class UniversityOperations {
 
         String newAddress = "";
         do {
-            System.out.print("Адреса [" + currentUniversity.getAddress() + "]: ");
+            System.out.print("Адреса [" + currentUniversity.address() + "]: ");
             newAddress = scanner.nextLine().trim();
 
             if (newAddress.equalsIgnoreCase("s") || newAddress.isEmpty()) {
-                newAddress = currentUniversity.getAddress();
+                newAddress = currentUniversity.address();
                 break;
             }
 

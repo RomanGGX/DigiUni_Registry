@@ -15,12 +15,12 @@ public class UserRepository {
     }
 
     public boolean add(User user) {
-        if(usernames.contains(user.getUsername())) {
+        if(usernames.contains(user.username())) {
             return false;
         }
-        usernames.add(user.getUsername());
-        credentials.put(user.getUsername(), user.getPassword());
-        accessLevels.put(user.getUsername(), user.getAccessLevel());
+        usernames.add(user.username());
+        credentials.put(user.username(), user.password());
+        accessLevels.put(user.username(), user.accessLevel());
         return true;
     }
 
