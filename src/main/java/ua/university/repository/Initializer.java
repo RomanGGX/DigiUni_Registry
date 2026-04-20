@@ -3,6 +3,7 @@ package ua.university.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ua.university.domain.*;
+import ua.university.exceptions.InitializationFailedException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,13 +12,53 @@ import java.util.List;
 public class Initializer {
 
     /** Initializes all repositories */
-    public static void initializeAll(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository, UserRepository userRepository, Path dataPath) throws IOException {
+    public static void initializeAll(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository, UserRepository userRepository, Path dataPath) throws IOException, InitializationFailedException {
         ObjectMapper mapper = new ObjectMapper();
 
-        initializeFaculties(mapper, dataPath, facultyRepository);
-        initializeDepartments(mapper, dataPath, departmentRepository);
-        initializeStudents(mapper, dataPath, studentRepository);
-        initializeTeachers(mapper, dataPath, teacherRepository);
+        Thread facultiesThread = new Thread(() -> {
+            try {
+                initializeFaculties(mapper, dataPath, facultyRepository);
+            } catch (IOException e) {
+                throw new InitializationFailedException("Failed to initialize faculties", e);
+            }
+        }, "Faculties load");
+        Thread departmentsThread = new Thread(() -> {
+            try {
+                initializeDepartments(mapper, dataPath, departmentRepository);
+            } catch (IOException e) {
+                throw new InitializationFailedException("Failed to initialize departments", e);
+            }
+        }, "Departments load");
+        Thread studentsThread = new Thread(() -> {
+            try {
+                initializeStudents(mapper, dataPath, studentRepository);
+            } catch (IOException e) {
+                throw new InitializationFailedException("Failed to initialize students", e);
+            }
+        }, "Students load");
+        Thread teachersThread = new Thread(() -> {
+            try {
+                initializeTeachers(mapper, dataPath, teacherRepository);
+            } catch (IOException e) {
+                throw new InitializationFailedException("Failed to initialize teachers", e);
+            }
+        }, "Teachers load");
+
+        facultiesThread.start();
+        departmentsThread.start();
+        studentsThread.start();
+        teachersThread.start();
+
+        try {
+            facultiesThread.join();
+            departmentsThread.join();
+            studentsThread.join();
+            teachersThread.join();
+        } catch (InterruptedException e) {
+            throw new IOException("Threads interrupted in initialization", e);
+        }
+
+        connectRepositories(studentRepository, facultyRepository, departmentRepository, teacherRepository);
     }
 
     /** Initializes faculties */
@@ -61,6 +102,61 @@ public class Initializer {
         );
         for (Teacher t : teachers) {
             teacherRepository.add(t);
+        }
+    }
+
+    /** Connects repositories by links */
+    public static void connectRepositories(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository) {
+        Thread connectStudentsThread = new Thread(() -> connectStudents(studentRepository, departmentRepository), "Students connect");
+        Thread connectFacultiesThread = new Thread(() -> connectFaculties(facultyRepository, teacherRepository), "Faculties connect");
+        Thread connectDepartmentsThread = new Thread(() -> connectDepartments(departmentRepository, facultyRepository, teacherRepository), "Departments connect");
+        Thread connectTeachersThread = new Thread(() -> connectTeachers(teacherRepository, departmentRepository), "Teachers connect");
+
+        connectStudentsThread.start();
+        connectFacultiesThread.start();
+        connectDepartmentsThread.start();
+        connectTeachersThread.start();
+    }
+
+    /** Connects student repository */
+    private static void connectStudents(StudentRepository studentRepository, DepartmentRepository departmentRepository) {
+        for (Student s : studentRepository.findAll()) {
+            if (s.getDepartment() != null) {
+                s.setDepartment(departmentRepository.findById(s.getDepartment().getCode()).orElse(null));
+                studentRepository.update(s.getId(), s);
+            }
+        }
+    }
+
+    /** Connects faculty repository */
+    private static void connectFaculties(FacultyRepository facultyRepository, TeacherRepository teacherRepository) {
+        for (Faculty f : facultyRepository.findAll()) {
+            if (f.getDean() != null) {
+                f.setDean(teacherRepository.findById(f.getDean().getId()).orElse(null));
+                facultyRepository.update(f.getCode(), f);
+            }
+        }
+    }
+
+    /** Connects department repository */
+    private static void connectDepartments(DepartmentRepository departmentRepository, FacultyRepository facultyRepository, TeacherRepository teacherRepository) {
+        for (Department d : departmentRepository.findAll()) {
+            if (d.getFaculty() != null) {
+                d.setFaculty(facultyRepository.findById(d.getFaculty().getCode()).orElse(null));
+            }
+            if (d.getHead() != null) {
+                d.setHead(teacherRepository.findById(d.getHead().getId()).orElse(null));
+            }
+            departmentRepository.update(d.getCode(), d);
+        }
+    }
+
+    private static void connectTeachers(TeacherRepository teacherRepository, DepartmentRepository departmentRepository) {
+        for (Teacher t : teacherRepository.findAll()) {
+            if (t.getDepartment() != null) {
+                t.setDepartment(departmentRepository.findById(t.getDepartment().getCode()).orElse(null));
+                teacherRepository.update(t.getId(), t);
+            }
         }
     }
 }

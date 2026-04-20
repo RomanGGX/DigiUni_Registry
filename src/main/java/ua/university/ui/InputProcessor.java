@@ -53,6 +53,7 @@ public class InputProcessor {
 
     /** Defines what to interact with */
     public void defineObject () {
+
         List<CommandContainer> mainCommands = new ArrayList<>(List.of(
                 new CommandContainer("університет", this::processUniversity, 1),
                 new CommandContainer("факультети", this::processFaculty, 1),
@@ -67,6 +68,8 @@ public class InputProcessor {
 
         while (running) {
             proceedOption("Оберіть, з чим працювати:", "вихід", mainCommands, true);
+            Thread initializationThread = new Thread(() -> Initializer.connectRepositories(studentRepository, facultyRepository, departmentRepository, teacherRepository), "Update thread");
+            initializationThread.start();
         }
     }
 

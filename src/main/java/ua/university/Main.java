@@ -1,4 +1,5 @@
 package ua.university;
+import ua.university.exceptions.InitializationFailedException;
 import ua.university.repository.*;
 import ua.university.service.IOOperations;
 import ua.university.ui.InputProcessor;
@@ -23,10 +24,9 @@ public class Main {
     public static void main(String[] args) {
         //Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
 
-        Path dataPath = Path.of("src", "main", "resources", "data");
         System.out.println("Ініціалізація шляху до бази даних");
         try {
-            IOOperations ioOperations = new IOOperations(dataPath, dataPath);
+            IOOperations ioOperations = new IOOperations();
             ioOperations.copyStableToRunning();
             System.out.println("Інціалізація успішна");
         } catch (IOException ex) {
@@ -36,11 +36,13 @@ public class Main {
 
         System.out.println("Ініціалізація репозиторіїв");
         try {
-            Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository, dataPath);
+            Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository, Path.of("src", "main", "resources", "data"));
             System.out.println("Ініціалізація успішна\n\n\n");
         } catch (IOException ex) {
             System.out.println("Не вдалося ініціалізувати репозиторії\nЗавершення програми");
             return;
+        } catch (InitializationFailedException ex) {
+            System.out.println("Не вдалося ініціалізувати репозиторії: " + ex.getMessage() + "\n Завершення програми");
         }
 
         System.out.println();

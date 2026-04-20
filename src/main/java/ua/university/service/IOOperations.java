@@ -1,13 +1,9 @@
 package ua.university.service;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -43,6 +39,14 @@ public class IOOperations {
 
         this.running = running;
         this.stable = stable;
+    }
+
+    /**
+     * OVERLOADING. Initializes running and stable paths
+     * @throws IOException Throws of initialization fails
+     */
+    public IOOperations() throws IOException {
+        this(Path.of("src", "main", "resources", "data"), Path.of("src", "main", "resources", "data"));
     }
 
     public Path getRunning() {return running;}
