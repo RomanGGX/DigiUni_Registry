@@ -1,6 +1,7 @@
 package ua.university.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(
@@ -85,6 +86,7 @@ public abstract class Person {
         this.phoneNumber = phoneNumber;
     }
 
+    @JsonIgnore
     public String getFullName() {
         return lastName + " " + firstName + " " + middleName;
     }

@@ -1,4 +1,5 @@
 package ua.university;
+import ua.university.exceptions.FileUpdateFailedException;
 import ua.university.exceptions.InitializationFailedException;
 import ua.university.repository.*;
 import ua.university.service.IOOperations;
@@ -52,5 +53,15 @@ public class Main {
         System.out.println();
 
         inputProcessor.defineObject();
+
+        System.out.println("\nТриває збереження змін");
+        try {
+            IOOperations ioOperations = new IOOperations();
+            ioOperations.updateRunning(studentRepository, facultyRepository, departmentRepository, teacherRepository);
+            ioOperations.copyRunningToStable();
+            ioOperations.removeRunning();
+        } catch (IOException | FileUpdateFailedException ex) {
+            System.out.println("Помилка внесення змін\nВихід без збереження");
+        }
     }
 }

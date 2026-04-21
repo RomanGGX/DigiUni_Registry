@@ -1,9 +1,18 @@
 package ua.university.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ua.university.exceptions.FileUpdateFailedException;
+import ua.university.repository.DepartmentRepository;
+import ua.university.repository.FacultyRepository;
+import ua.university.repository.StudentRepository;
+import ua.university.repository.TeacherRepository;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -79,5 +88,75 @@ public class IOOperations {
      */
     public void copyStableToRunning() throws IOException {
         transferFiles(stable, running);
+    }
+
+    /**
+     * Copies running configuration to stable configuration
+     * @throws IOException Throws if path not found
+     */
+    public void copyRunningToStable() throws IOException {
+        transferFiles(running, stable);
+    }
+
+    /**
+     * Saves an information about changes in repositories to running configuration
+     * @throws IOException Throws if threads are interrupted
+     * @throws FileUpdateFailedException Throws if unable to update file
+     */
+    public void updateRunning(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository) throws IOException, FileUpdateFailedException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Thread updateStudentsThread = new Thread(() -> {
+            try {
+                mapper.writerWithDefaultPrettyPrinter().writeValue(running.resolve("Students.json").toFile(), studentRepository.findAll());
+            } catch (IOException e) {
+                throw new FileUpdateFailedException("Failed to update students file",e);
+            }
+        }, "Update students thread");
+        Thread updateFacultiesThread = new Thread(() -> {
+            try {
+                mapper.writerWithDefaultPrettyPrinter().writeValue(running.resolve("Faculties.json").toFile(), facultyRepository.findAll());
+            } catch (IOException e) {
+                throw new FileUpdateFailedException("Failed to update faculties file", e);
+            }
+        }, "Update faculties thread");
+        Thread updateDepartmentsThread = new Thread(() -> {
+            try {
+                mapper.writerWithDefaultPrettyPrinter().writeValue(running.resolve("Departments.json").toFile(), departmentRepository.findAll());
+            } catch (IOException e) {
+                throw new FileUpdateFailedException("Failed to update departments file", e);
+            }
+        }, "Update departments thread");
+        Thread updateTeachersThread = new Thread(() -> {
+            try {
+                mapper.writerWithDefaultPrettyPrinter().writeValue(running.resolve("Teachers.json").toFile(), teacherRepository.findAll());
+            } catch (IOException e) {
+                throw new FileUpdateFailedException("Failed to update teachers file", e);
+            }
+        }, "Update teachers thread");
+
+        updateStudentsThread.start();
+        updateFacultiesThread.start();
+        updateDepartmentsThread.start();
+        updateTeachersThread.start();
+
+        try {
+            updateStudentsThread.join();
+            updateFacultiesThread.join();
+            updateDepartmentsThread.join();
+            updateTeachersThread.join();
+        } catch (InterruptedException e) {
+            throw new IOException("Threads interrupted on saving", e);
+        }
+    }
+
+    public void removeRunning() throws IOException {
+        try (Stream<Path> paths = Files.walk(running)) {
+            paths.sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::deleteOnExit);
+        } catch (IOException e) {
+            throw new IOException("Failed to delete running configuration", e);
+        }
     }
 }

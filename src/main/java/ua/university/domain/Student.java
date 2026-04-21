@@ -1,5 +1,7 @@
 package ua.university.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Objects;
 
 public class Student extends Person{
@@ -53,6 +55,7 @@ public class Student extends Person{
         return department;
     }
 
+    @JsonIgnore
     public Faculty getFaculty() {
         if (department != null) {
             return department.getFaculty();

@@ -1,6 +1,7 @@
 package ua.university.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -57,6 +58,7 @@ public class Teacher extends Person{
         return department;
     }
 
+    @JsonIgnore
     public Faculty getFaculty() {
         if (department != null) {
             return department.getFaculty();
