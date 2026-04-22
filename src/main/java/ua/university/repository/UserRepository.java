@@ -9,9 +9,9 @@ public class UserRepository {
     private final Map<String, Integer> accessLevels = new HashMap<>();
 
     public UserRepository() {
-        add(new User("user1", "userPass", 1));
-        add(new User("manager1", "managerPass", 2));
-        add(new User("admin1", "adminPass", 3));
+        add(new User("user1", "userPass", 0b0001));
+        add(new User("manager1", "managerPass", 0b0011));
+        add(new User("admin1", "adminPass", 0b0111));
     }
 
     public boolean add(User user) {
@@ -29,6 +29,7 @@ public class UserRepository {
     }
 
     public int getAccessLevel(String username) {
+
         return accessLevels.get(username);
     }
 

@@ -14,7 +14,7 @@ public class InputProcessor {
     /** Adds input scanner to the class */
     private final Scanner scanner = new Scanner(System.in);
     /** Adds access level */
-    private int accessLevel = 1;
+    private int accessLevel = 0;
     /** Saves information about if the program is running */
     private boolean running = true;
 
@@ -55,15 +55,15 @@ public class InputProcessor {
     public void defineObject () {
 
         List<CommandContainer> mainCommands = new ArrayList<>(List.of(
-                new CommandContainer("університет", this::processUniversity, 1),
-                new CommandContainer("факультети", this::processFaculty, 1),
-                new CommandContainer("кафедри", this::processDepartment, 1),
-                new CommandContainer("студенти", this::processStudent, 1),
-                new CommandContainer("викладачі", this::processTeacher, 1),
-                new CommandContainer("пошук студентів", this::processFind, 1),
-                new CommandContainer("звіти", this::processReports, 1),
-                new CommandContainer("вхід", this::authorize, 1),
-                new CommandContainer("дії з користувачами", this::processUser, 3)
+                new CommandContainer("університет", this::processUniversity, CommandContainer.GUEST_ACCESS),
+                new CommandContainer("факультети", this::processFaculty, CommandContainer.GUEST_ACCESS),
+                new CommandContainer("кафедри", this::processDepartment, CommandContainer.GUEST_ACCESS),
+                new CommandContainer("студенти", this::processStudent, CommandContainer.USER_ACCESS),
+                new CommandContainer("викладачі", this::processTeacher, CommandContainer.USER_ACCESS),
+                new CommandContainer("пошук студентів", this::processFind, CommandContainer.USER_ACCESS),
+                new CommandContainer("звіти", this::processReports, CommandContainer.USER_ACCESS),
+                new CommandContainer("вхід", this::authorize, CommandContainer.GUEST_ACCESS),
+                new CommandContainer("дії з користувачами", this::processUser, CommandContainer.ADMIN_ACCESS)
         ));
 
         while (running) {
@@ -76,8 +76,8 @@ public class InputProcessor {
     /** Interacts with university */
     private void processUniversity() {
         List<CommandContainer> universityCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про університети", universityOperations::showUniversity, 1),
-                new CommandContainer("редагувати інформацію про університет", universityOperations::updateUniversity, 2)
+                new CommandContainer("інформація про університети", universityOperations::showUniversity, CommandContainer.GUEST_ACCESS),
+                new CommandContainer("редагувати інформацію про університет", universityOperations::updateUniversity, CommandContainer.MANAGER_ACCESS)
         ));
 
         proceedOption("Оберіть дію:", "повернутися", universityCommands);
@@ -86,10 +86,10 @@ public class InputProcessor {
     /** interacts with faculties */
     private void processFaculty() {
         List<CommandContainer> facultyCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про факультет", () -> facultyOperations.showFaculties(facultyRepository.findAll()), 1),
-                new CommandContainer("створити факультет", facultyOperations::addFaculty, 2),
-                new CommandContainer("видалити факультет", facultyOperations::deleteFaculty, 2),
-                new CommandContainer("редагуфати факультет", facultyOperations::updateFaculty, 2)
+                new CommandContainer("інформація про факультет", () -> facultyOperations.showFaculties(facultyRepository.findAll()), CommandContainer.GUEST_ACCESS),
+                new CommandContainer("створити факультет", facultyOperations::addFaculty, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("видалити факультет", facultyOperations::deleteFaculty, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("редагуфати факультет", facultyOperations::updateFaculty, CommandContainer.MANAGER_ACCESS)
         ));
 
         proceedOption("Оберіть дію:", "певернутися", facultyCommands);
@@ -98,10 +98,10 @@ public class InputProcessor {
     /** Interacts with departments */
     private void processDepartment() {
         List<CommandContainer> departmentCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про кафедри", () -> departmentOperations.showDepartments(departmentRepository.findAll()), 1),
-                new CommandContainer("створити кафедру", departmentOperations::addDepartment, 2),
-                new CommandContainer("видалити кафедру", departmentOperations::deleteDepartment, 2),
-                new CommandContainer("редагуфати кафедру", departmentOperations::updateDepartment, 2)
+                new CommandContainer("інформація про кафедри", () -> departmentOperations.showDepartments(departmentRepository.findAll()), CommandContainer.GUEST_ACCESS),
+                new CommandContainer("створити кафедру", departmentOperations::addDepartment, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("видалити кафедру", departmentOperations::deleteDepartment, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("редагуфати кафедру", departmentOperations::updateDepartment, CommandContainer.MANAGER_ACCESS)
         ));
 
         proceedOption("Оберіть дію:", "повернутися", departmentCommands);
@@ -110,12 +110,12 @@ public class InputProcessor {
     /** Interacts with students */
     private void processStudent() {
         List<CommandContainer> studentCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про студентів", () -> studentOperations.showStudents(studentRepository.findAll()), 1),
-                new CommandContainer("створити студента", studentOperations::addStudent, 2),
-                new CommandContainer("видалити студента", studentOperations::deleteStudent, 2),
-                new CommandContainer("редагуфати студента", studentOperations::updateStudent, 2),
-                new CommandContainer("перевести студента", transferOperations::transferStudentToDepartment, 2),
-                new CommandContainer("змінити курс студента", transferOperations::transferStudentToCourse, 2)
+                new CommandContainer("інформація про студентів", () -> studentOperations.showStudents(studentRepository.findAll()), CommandContainer.USER_ACCESS),
+                new CommandContainer("створити студента", studentOperations::addStudent, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("видалити студента", studentOperations::deleteStudent, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("редагуфати студента", studentOperations::updateStudent, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("перевести студента", transferOperations::transferStudentToDepartment, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("змінити курс студента", transferOperations::transferStudentToCourse, CommandContainer.MANAGER_ACCESS)
         ));
 
         proceedOption("Оберіть дію:", "повернутися", studentCommands);
@@ -124,10 +124,10 @@ public class InputProcessor {
     /** Interacts with teachers */
     private void processTeacher() {
         List<CommandContainer> teacherCommands = new ArrayList<>(List.of(
-                new CommandContainer("інформація про викладачів", () -> teacherOperations.showTeachers(teacherRepository.findAll()), 1),
-                new CommandContainer("створити викладача", teacherOperations::addTeacher, 2),
-                new CommandContainer("видалити викладача", teacherOperations::deleteTeacher, 2),
-                new CommandContainer("редагуфати викладача", teacherOperations::updateTeacher, 2)
+                new CommandContainer("інформація про викладачів", () -> teacherOperations.showTeachers(teacherRepository.findAll()), CommandContainer.USER_ACCESS),
+                new CommandContainer("створити викладача", teacherOperations::addTeacher, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("видалити викладача", teacherOperations::deleteTeacher, CommandContainer.MANAGER_ACCESS),
+                new CommandContainer("редагуфати викладача", teacherOperations::updateTeacher, CommandContainer.MANAGER_ACCESS)
         ));
 
         proceedOption("Оберіть дію:", "повернутися", teacherCommands);
@@ -136,11 +136,11 @@ public class InputProcessor {
     /** Interacts with find operations */
     private void processFind() {
         List<CommandContainer> findCommands = new ArrayList<>(List.of(
-                new CommandContainer("повне ім'я", findOperations::studentByFullName, 1),
-                new CommandContainer("курс", findOperations::studentByCourse, 1),
-                new CommandContainer("група", findOperations::studentByGroup, 1),
-                new CommandContainer("id студента", findOperations::studentByStudentID, 1),
-                new CommandContainer("електронна пошта", findOperations::studentByEmail, 1)
+                new CommandContainer("повне ім'я", findOperations::studentByFullName, CommandContainer.USER_ACCESS),
+                new CommandContainer("курс", findOperations::studentByCourse, CommandContainer.USER_ACCESS),
+                new CommandContainer("група", findOperations::studentByGroup, CommandContainer.USER_ACCESS),
+                new CommandContainer("id студента", findOperations::studentByStudentID, CommandContainer.USER_ACCESS),
+                new CommandContainer("електронна пошта", findOperations::studentByEmail, CommandContainer.USER_ACCESS)
         ));
 
         proceedOption("Оберіть параметр для пошуку:", "повернутися", findCommands);
@@ -148,14 +148,14 @@ public class InputProcessor {
 
     private void processReports() {
         List<CommandContainer> departmentCommands = new ArrayList<>(List.of(
-                new CommandContainer("всі студенти за курсами", reportOperations::showAllStudentsByCourse, 1),
-                new CommandContainer("студенти факультету за алфавітом", reportOperations::showStudentsByFacultyAlphabetically, 1),
-                new CommandContainer("викладачі факультету за алфавітом", reportOperations::showTeachersByFacultyAlphabetically, 1),
-                new CommandContainer("студенти кафедри за курсами", reportOperations::showStudentsByDepartmentByCourse, 1),
-                new CommandContainer("студенти кафедри за алфавітом", reportOperations::showStudentsByDepartmentAlphabetically, 1),
-                new CommandContainer("викладачі кафедри за алфавітом", reportOperations::showTeachersByDepartmentAlphabetically, 1),
-                new CommandContainer("студенти кафедри вказаного курсу", reportOperations::showStudentsByDepartmentAndCourse, 1),
-                new CommandContainer("студенти кафедри вказаного курсу (за алфавітом)", reportOperations::showStudentsByDepartmentAndCourseAlphabetically, 1)
+                new CommandContainer("всі студенти за курсами", reportOperations::showAllStudentsByCourse, CommandContainer.USER_ACCESS),
+                new CommandContainer("студенти факультету за алфавітом", reportOperations::showStudentsByFacultyAlphabetically, CommandContainer.USER_ACCESS),
+                new CommandContainer("викладачі факультету за алфавітом", reportOperations::showTeachersByFacultyAlphabetically, CommandContainer.USER_ACCESS),
+                new CommandContainer("студенти кафедри за курсами", reportOperations::showStudentsByDepartmentByCourse, CommandContainer.USER_ACCESS),
+                new CommandContainer("студенти кафедри за алфавітом", reportOperations::showStudentsByDepartmentAlphabetically, CommandContainer.USER_ACCESS),
+                new CommandContainer("викладачі кафедри за алфавітом", reportOperations::showTeachersByDepartmentAlphabetically, CommandContainer.USER_ACCESS),
+                new CommandContainer("студенти кафедри вказаного курсу", reportOperations::showStudentsByDepartmentAndCourse, CommandContainer.USER_ACCESS),
+                new CommandContainer("студенти кафедри вказаного курсу (за алфавітом)", reportOperations::showStudentsByDepartmentAndCourseAlphabetically, CommandContainer.USER_ACCESS)
         ));
 
         proceedOption("Оберіть звіт:", "повернутися", departmentCommands);
@@ -164,7 +164,7 @@ public class InputProcessor {
     /** Interacts with user operations */
     private void processUser() {
         List<CommandContainer> userContainer = new ArrayList<>(List.of(
-                new CommandContainer("додати користовача", userOperations::addUser, 3)
+                new CommandContainer("додати користовача", userOperations::addUser, CommandContainer.ADMIN_ACCESS)
         ));
 
         proceedOption("Оберіть дію:", "повернутися", userContainer);
@@ -242,8 +242,8 @@ public class InputProcessor {
 
         for (CommandContainer currentCommand : listToProceed) {
             if (currentCommand.isAvailable(accessLevel)) {
-                System.out.println(counter + " - " + currentCommand.getMessage());
-                commandsMap.put(counter, currentCommand.getAction());
+                System.out.println(counter + " - " + currentCommand.message);
+                commandsMap.put(counter, currentCommand.action);
                 counter++;
             }
         }
@@ -290,5 +290,21 @@ public class InputProcessor {
         } while (!resultApproved);
 
         return result;
+    }
+
+    private record CommandContainer(String message, Runnable action, int accessLevel) {
+        public static final int GUEST_ACCESS = 0;
+        public static final int USER_ACCESS = 0b0001;
+        public static final int MANAGER_ACCESS = 0b0010;
+        public static final int ADMIN_ACCESS = 0b0100;
+
+        /**
+         * Checks if access level of command is lower than arg
+         * @param arg int access level
+         * @return boolean result of arg >= accessLevel operation
+         */
+        public boolean isAvailable(int arg) {
+            return (arg & accessLevel) == accessLevel;
+        }
     }
 }

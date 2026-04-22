@@ -86,6 +86,17 @@ public class UserOperations {
             }
         } while (!resultApproved);
 
+        switch (result) {
+            case 1:
+                break;
+            case 2:
+                result = 0b0011;
+                break;
+            case 3:
+                result = 0b0111;
+                break;
+        }
+
         return result;
     }
 }
