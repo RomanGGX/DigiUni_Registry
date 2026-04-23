@@ -24,13 +24,15 @@ public class FacultyOperations {
     Displays faculties list
     */
     public void showFaculties(List<Faculty> faculties) {
-        if (faculties == null || faculties.isEmpty()) {
-            System.out.println("Інформацію про факультети не знайдено");
+        System.out.println("\n=== Список факультетів ===");
+
+        if (faculties.isEmpty()) {
+            System.out.println("Список порожній.");
             return;
         }
-        System.out.println("---Список факультетів---");
-        for (Faculty faculty : faculties) {
-            System.out.println(faculty.toString());
+
+        for (int i = 0; i < faculties.size(); i++) {
+            System.out.println((i + 1) + ". " + faculties.get(i));
         }
     }
 
@@ -184,14 +186,7 @@ public class FacultyOperations {
             return;
         }
 
-        System.out.println("\n=== Список факультетів ===");
-        for (int i = 0; i < faculties.size(); i++) {
-            String deanName = faculties.get(i).getDean() != null ?
-                    faculties.get(i).getDean().getFullName() : "не призначено";
-            System.out.println((i + 1) + ". [Код: " + faculties.get(i).getCode() + "] " +
-                    faculties.get(i).getShortName() + " - " + faculties.get(i).getName() +
-                    " (Декан: " + deanName + ")");
-        }
+        showFaculties(faculties);
 
         System.out.print("\nВведіть код факультету для редагування: ");
         String codeInput = scanner.nextLine().trim();

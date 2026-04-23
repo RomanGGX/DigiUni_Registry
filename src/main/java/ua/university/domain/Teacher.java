@@ -92,17 +92,23 @@ public class Teacher extends Person{
 
     @Override
     public String toString() {
-        return "Teacher{" +
-                "id=" + getId() +
-                ", fullName='" + getFullName() + '\'' +
-                ", position='" + position + '\'' +
-                ", department='" + (department != null ? department.getName() : "не вказано") + '\'' +
-                ", academicDegree='" + academicDegree + '\'' +
-                ", academicTitle='" + academicTitle + '\'' +
-                ", workload=" + workload + " годин" +
-                ", email='" + getEmail() + '\'' +
-                ", phoneNumber='" + getPhoneNumber() + '\'' +
-                '}';
+        String facultyName = (getFaculty() != null) ? getFaculty().getShortName() : "не вказано";
+        String deptName = (department != null) ? department.getName() : "не вказано";
+
+        return String.format(
+                "[ID: %d] %s | %s | %s, %s | Навантаження: %.1f год | %s, %s | Дн: %s, Email: %s, Тел: %s",
+                getId(),
+                getFullName(),
+                position,
+                academicDegree,
+                academicTitle,
+                workload,
+                facultyName,
+                deptName,
+                getBirthDate(),
+                getEmail(),
+                getPhoneNumber()
+        );
     }
 
     @Override

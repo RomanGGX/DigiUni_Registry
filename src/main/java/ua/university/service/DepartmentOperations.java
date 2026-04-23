@@ -27,24 +27,15 @@ public class DepartmentOperations {
     Displays departments list
      */
     public void showDepartments(List<Department> departments) {
-        if (departments == null || departments.isEmpty()) {
-            System.out.println("Немає кафедр");
+        System.out.println("\n=== Список кафедр ===");
+
+        if (departments.isEmpty()) {
+            System.out.println("Список порожній.");
             return;
         }
-        System.out.println("---Список кафедр---");
-        for (Department department : departments) {
-            String facultyName = department.getFaculty() != null ?
-                    department.getFaculty().getShortName() : "немає";
-            String headName = department.getHead() != null ?
-                    department.getHead().getLastName() : "не призначено";
 
-            System.out.println("Department{" +
-                    "code=" + department.getCode() +
-                    ", name='" + department.getName() + '\'' +
-                    ", faculty='" + facultyName + '\'' +
-                    ", head='" + headName + '\'' +
-                    ", cabinet='" + department.getCabinet() + '\'' +
-                    '}');
+        for (int i = 0; i < departments.size(); i++) {
+            System.out.println((i + 1) + ". " + departments.get(i));
         }
     }
 
@@ -230,16 +221,7 @@ public class DepartmentOperations {
             return;
         }
 
-        System.out.println("\n=== Список кафедр ===");
-        for (int i = 0; i < departments.size(); i++) {
-            String facultyName = departments.get(i).getFaculty() != null ?
-                    departments.get(i).getFaculty().getShortName() : "немає";
-            String headName = departments.get(i).getHead() != null ?
-                    departments.get(i).getHead().getFullName() : "не призначено";
-            System.out.println((i + 1) + ". [Код: " + departments.get(i).getCode() + "] " +
-                    departments.get(i).getName() + " (Факультет: " + facultyName +
-                    ", Завідувач: " + headName + ")");
-        }
+        showDepartments(departments);
 
         System.out.print("\nВведіть код кафедри для редагування: ");
         String codeInput = scanner.nextLine().trim();

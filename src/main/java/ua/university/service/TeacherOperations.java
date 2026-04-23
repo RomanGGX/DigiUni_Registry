@@ -27,13 +27,15 @@ public class TeacherOperations {
     Displays teachers list
     */
     public void showTeachers(List<Teacher> teachers) {
-        if (teachers == null || teachers.isEmpty()) {
-            System.out.println("Інформацію про викладачів не знайдено");
+        System.out.println("\n=== Список викладачів ===");
+
+        if (teachers.isEmpty()) {
+            System.out.println("Список порожній.");
             return;
         }
-        System.out.println("---Список викладачів---");
-        for (Teacher teacher : teachers) {
-            System.out.println(teacher.toString());
+
+        for (int i = 0; i < teachers.size(); i++) {
+            System.out.println((i + 1) + ". " + teachers.get(i));
         }
     }
 

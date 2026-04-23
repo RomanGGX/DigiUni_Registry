@@ -69,13 +69,16 @@ public class Faculty {
 
     @Override
     public String toString() {
-        return "Faculty{" +
-                "code=" + code +
-                ", name='" + name + '\'' +
-                ", shortName='" + shortName + '\'' +
-                ", dean=" + (dean != null ? dean.getFullName() : "не призначено") +
-                ", contacts='" + contacts + '\'' +
-                '}';
+        String deanName = (dean != null) ? dean.getFullName() : "не призначено";
+
+        return String.format(
+                "[Код: %d] %s (%s) | Декан: %s | Контакти: %s",
+                code,
+                name,
+                shortName,
+                deanName,
+                contacts
+        );
     }
 
     @Override

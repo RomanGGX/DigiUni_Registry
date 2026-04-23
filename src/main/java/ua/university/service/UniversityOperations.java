@@ -22,8 +22,12 @@ public class UniversityOperations {
     */
     public void showUniversity() {
         University university = universityRepository.getUniversity();
-        System.out.println("---Інформація про університет---");
-        System.out.println(university.toString());
+        System.out.println("\n=== Інформація про університет ===");
+
+        System.out.println("Назва: " + university.fullName() + " | " +
+                "Скорочено: " + university.shortName() + " | " +
+                "Місто: " + university.city() + " | " +
+                "Адреса: " + university.address());
     }
 
 
@@ -33,7 +37,7 @@ public class UniversityOperations {
         University currentUniversity = universityRepository.getUniversity();
 
         System.out.println("\nПоточна інформація:");
-        System.out.println(currentUniversity.toString());
+        showUniversity();
 
         System.out.println("\n--- Введіть нові дані (введіть 's' щоб залишити поточне значення) ---");
 

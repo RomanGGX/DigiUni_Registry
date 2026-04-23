@@ -30,13 +30,15 @@ public class StudentOperations {
  Displays students list
  */
     public void showStudents(List<Student> students) {
-        if (students == null || students.isEmpty()) {
-            System.out.println("Інформацію про студентів не знайдено");
+        System.out.println("\n=== Список студентів ===");
+
+        if (students.isEmpty()) {
+            System.out.println("Список порожній.");
             return;
         }
-        System.out.println("---Список студентів---");
-        for (Student student : students) {
-            System.out.println(student.toString());
+
+        for (int i = 0; i < students.size(); i++) {
+            System.out.println((i + 1) + ". " + students.get(i));
         }
     }
 

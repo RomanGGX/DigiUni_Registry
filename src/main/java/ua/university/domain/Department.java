@@ -69,13 +69,17 @@ public class Department {
 
     @Override
     public String toString() {
-        return "Department{" +
-                "code='" + code + '\'' +
-                ", name='" + name + '\'' +
-                ", faculty=" + faculty +
-                ", head=" + head +
-                ", cabinet='" + cabinet + '\'' +
-                '}';
+        String facultyName = (faculty != null) ? faculty.getShortName() : "не вказано";
+        String headName = (head != null) ? head.getFullName() : "не призначено";
+
+        return String.format(
+                "[Код: %d] %s | Факультет: %s | Завідувач: %s | Кабінет: %s",
+                code,
+                name,
+                facultyName,
+                headName,
+                cabinet
+        );
     }
 
     @Override

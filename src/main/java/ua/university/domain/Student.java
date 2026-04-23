@@ -93,23 +93,25 @@ public class Student extends Person{
 
     @Override
     public String toString() {
-        return "Student{" +
-                "id=" + getId() +
-                ", fullName='" + getFullName() + '\'' +
-                ", faculty='" + (department != null && department.getFaculty() != null
-                ? department.getFaculty().getShortName()
-                : "не вказано") + '\'' +
-                ", department='" + (department != null ? department.getName() : "не вказано") + '\'' +
-                ", birthDate='" + getBirthDate() + '\'' +
-                ", email='" + getEmail() + '\'' +
-                ", phoneNumber='" + getPhoneNumber() + '\'' +
-                ", studentId='" + studentId + '\'' +
-                ", course=" + course +
-                ", group='" + group + '\'' +
-                ", yearEnroll=" + yearEnroll +
-                ", studyForm='" + studyForm + '\'' +
-                ", status='" + status + '\'' +
-                '}';
+        String facultyName = (getFaculty() != null) ? getFaculty().getShortName() : "не вказано";
+        String deptName = (getDepartment() != null) ? getDepartment().getName() : "не вказано";
+
+        return String.format(
+                "[ID: %d] %s | Квиток: %s, Курс: %d, Група: %s | %s, %s | Вступ: %d, Форма: %s, Статус: %s | Дн: %s, Email: %s, Тел: %s",
+                getId(),
+                getFullName(),
+                studentId,
+                course,
+                group,
+                facultyName,
+                deptName,
+                yearEnroll,
+                studyForm,
+                status,
+                getBirthDate(),
+                getEmail(),
+                getPhoneNumber()
+        );
     }
 
     @Override
