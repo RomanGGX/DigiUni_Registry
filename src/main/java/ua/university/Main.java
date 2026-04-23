@@ -75,11 +75,13 @@ public class Main {
     private static void saveChanges() {
         System.out.println("\nТриває збереження змін");
         try {
+            IOOperations ioOperations = new IOOperations();
+            ioOperations.updateRunning(studentRepository, facultyRepository, departmentRepository, teacherRepository);
+
             Client client = new Client();
             client.saveChanges();
             client.stopServer();
 
-            IOOperations ioOperations = new IOOperations();
             ioOperations.removeRunning();
         } catch (IOException | FileUpdateFailedException ex) {
             System.out.println("Помилка внесення змін\nВихід без збереження");
