@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ua.university.Main;
 import ua.university.domain.*;
 import ua.university.exceptions.InitializationFailedException;
 
@@ -73,7 +72,7 @@ public class Initializer {
     /** Initializes faculties */
     private static void initializeFaculties(ObjectMapper mapper, Path dataPath, FacultyRepository facultyRepository) throws IOException {
         List<Faculty> faculties = mapper.readValue(
-                dataPath.resolve("stable").resolve("Faculties.json").toFile(),
+                dataPath.resolve("Faculties.json").toFile(),
                 new TypeReference<>() {}
         );
         for (Faculty f : faculties) {
@@ -84,7 +83,7 @@ public class Initializer {
     /** Initializes faculties */
     private static void initializeDepartments(ObjectMapper mapper, Path dataPath, DepartmentRepository departmentRepository) throws IOException {
         List<Department> departments = mapper.readValue(
-                dataPath.resolve("stable").resolve("Departments.json").toFile(),
+                dataPath.resolve("Departments.json").toFile(),
                 new TypeReference<>() {}
         );
         for (Department d : departments) {
@@ -95,7 +94,7 @@ public class Initializer {
     /** Initializes faculties */
     private static void initializeStudents(ObjectMapper mapper, Path dataPath, StudentRepository studentRepository) throws IOException {
         List<Student> students = mapper.readValue(
-                dataPath.resolve("stable").resolve("Students.json").toFile(),
+                dataPath.resolve("Students.json").toFile(),
                 new TypeReference<>() {}
         );
         for (Student s : students) {
@@ -106,7 +105,7 @@ public class Initializer {
     /** Initializes faculties */
     private static void initializeTeachers(ObjectMapper mapper, Path dataPath, TeacherRepository teacherRepository) throws IOException {
         List<Teacher> teachers = mapper.readValue(
-                dataPath.resolve("stable").resolve("Teachers.json").toFile(),
+                dataPath.resolve("Teachers.json").toFile(),
                 new TypeReference<>() {}
         );
         for (Teacher t : teachers) {

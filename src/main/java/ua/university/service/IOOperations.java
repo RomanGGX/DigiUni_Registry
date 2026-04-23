@@ -28,18 +28,12 @@ public class IOOperations {
      * @throws IOException Throws if initialization fails
      */
     public IOOperations(Path running, Path stable) throws IOException {
-        running = running.resolve("running");
-        stable = stable.resolve("stable");
+        if (Files.notExists(running.resolve("Faculties.json"))) Files.createFile(running.resolve("Faculties.json"));
+        if (Files.notExists(running.resolve("Departments.json"))) Files.createFile(running.resolve("Departments.json"));
+        if (Files.notExists(running.resolve("Students.json"))) Files.createFile(running.resolve("Students.json"));
+        if (Files.notExists(running.resolve("Teachers.json"))) Files.createFile(running.resolve("Teachers.json"));
 
-        if (Files.notExists(running)) {
-            Files.createDirectories(running);
-            Files.createFile(running.resolve("Faculties.json"));
-            Files.createFile(running.resolve("Departments.json"));
-            Files.createFile(running.resolve("Students.json"));
-            Files.createFile(running.resolve("Teachers.json"));
-        }
         if (Files.notExists(stable)) {
-            Files.createDirectories(stable);
             Files.createFile(stable.resolve("Faculties.json"));
             Files.createFile(stable.resolve("Departments.json"));
             Files.createFile(stable.resolve("Students.json"));
@@ -55,7 +49,7 @@ public class IOOperations {
      * @throws IOException Throws of initialization fails
      */
     public IOOperations() throws IOException {
-        this(Path.of("src", "main", "resources", "data"), Path.of("src", "main", "resources", "data"));
+        this(Path.of("src", "main", "resources", "data", "running"), Path.of("src", "main", "resources", "data", "stable"));
     }
 
     public Path getRunning() {return running;}

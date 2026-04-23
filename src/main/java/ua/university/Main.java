@@ -3,9 +3,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.university.exceptions.FileUpdateFailedException;
 import ua.university.exceptions.InitializationFailedException;
+import ua.university.network.Client;
 import ua.university.repository.*;
 import ua.university.service.IOOperations;
-import ua.university.service.TransferOperations;
 import ua.university.ui.InputProcessor;
 
 import java.io.IOException;
@@ -23,35 +23,8 @@ public class Main {
 
     private static final InputProcessor inputProcessor = new InputProcessor(studentRepository, universityRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
 
-    /** Adds a list of access levels */
-    private enum AccessLevel {user, manager, admin}
-
     public static void main(String[] args) {
-        //Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
-
-        System.out.println("Ініціалізація шляху до бази даних");
-        try {
-            IOOperations ioOperations = new IOOperations();
-            ioOperations.copyStableToRunning();
-            System.out.println("Інціалізація успішна");
-        } catch (IOException ex) {
-            System.out.println("Не вдалося ініціалізувати шлях до бази даних\nЗавершення програми");
-            return;
-        }
-
-        System.out.println("Ініціалізація репозиторіїв");
-        try {
-            Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository, Path.of("src", "main", "resources", "data"));
-            System.out.println("Ініціалізація успішна\n\n\n");
-            logger.info("Repository initialization succeeded");
-        } catch (IOException ex) {
-            System.out.println("Не вдалося ініціалізувати репозиторії\nЗавершення програми");
-            logger.error("Repository initialization failed");
-            return;
-        } catch (InitializationFailedException ex) {
-            System.out.println("Не вдалося ініціалізувати репозиторії: " + ex.getMessage() + "\n Завершення програми");
-            logger.error("Repository initialization failed: {}", ex.getMessage());
-        }
+        if (!mainInitialization()) return;
 
         System.out.println();
         System.out.println("╔════════════════════════════════════════════╗");
@@ -61,11 +34,52 @@ public class Main {
 
         inputProcessor.defineObject();
 
+        saveChanges();
+    }
+
+    /**
+     * Initializes data and repositories
+     * @return Return false to finish program
+     */
+    private static boolean mainInitialization() {
+        System.out.println("Завантаження бази даних");
+        try {
+            Client client = new Client();
+            client.downloadData();
+
+            System.out.println("Ініціалізація успішна");
+        } catch (IOException ex) {
+            System.out.println("Не вдалося завантажити базу даних\nЗавершення програми\n");
+            return false;
+        }
+
+        System.out.println("Ініціалізація репозиторіїв");
+        try {
+            Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository, Path.of("src", "main", "resources", "data", "running"));
+            System.out.println("Ініціалізація успішна\n\n\n");
+            logger.info("Repository initialization succeeded");
+        } catch (IOException ex) {
+            System.out.println("Не вдалося ініціалізувати репозиторії\nЗавершення програми");
+            logger.error("Repository initialization failed");
+            return false;
+        } catch (InitializationFailedException ex) {
+            System.out.println("Не вдалося ініціалізувати репозиторії: " + ex.getMessage() + "\n Завершення програми");
+            logger.error("Repository initialization failed: {}", ex.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    /** Saves changes to the server */
+    private static void saveChanges() {
         System.out.println("\nТриває збереження змін");
         try {
+            Client client = new Client();
+            client.saveChanges();
+            client.stopServer();
+
             IOOperations ioOperations = new IOOperations();
-            ioOperations.updateRunning(studentRepository, facultyRepository, departmentRepository, teacherRepository);
-            ioOperations.copyRunningToStable();
             ioOperations.removeRunning();
         } catch (IOException | FileUpdateFailedException ex) {
             System.out.println("Помилка внесення змін\nВихід без збереження");
