@@ -1,5 +1,7 @@
 package ua.university.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.university.domain.University;
 import ua.university.repository.*;
 
@@ -9,6 +11,7 @@ public class UniversityOperations {
     private final Scanner scanner = new Scanner(System.in);
     private final InputValidator inputValidator = new InputValidator();
     private final UniversityRepository universityRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UniversityOperations.class);
 
     public UniversityOperations(UniversityRepository universityRepository) {
         this.universityRepository = universityRepository;
@@ -98,5 +101,6 @@ public class UniversityOperations {
         universityRepository.updateUniversity(updatedUniversity);
 
         System.out.println("Інформацію про університет успішно оновлено!");
+        logger.info("University information was updated successfully");
     }
 }

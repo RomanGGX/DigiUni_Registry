@@ -1,5 +1,7 @@
 package ua.university.ui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.university.exceptions.EmptyInputException;
 import ua.university.exceptions.UnsupportedIntegerInputException;
 import ua.university.repository.*;
@@ -17,6 +19,7 @@ public class InputProcessor {
     private int accessLevel = 0;
     /** Saves information about if the program is running */
     private boolean running = true;
+    private static final Logger auditLogger = LoggerFactory.getLogger("AUDIT");
 
     private final UniversityOperations universityOperations;
     private final StudentOperations studentOperations;
@@ -193,6 +196,7 @@ public class InputProcessor {
                     System.out.print("\nВітаємо!\nРівень доступу - адміністратор\n");
                     break;
             }
+            auditLogger.info("User '{}' logged in", loginName);
         }
         else System.out.println("\nНеправильний логін або пароль\n");
     }

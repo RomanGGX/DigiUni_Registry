@@ -1,5 +1,7 @@
 package ua.university.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.university.domain.Department;
 import ua.university.domain.Faculty;
 import ua.university.domain.Student;
@@ -15,6 +17,7 @@ public class StudentOperations {
     private final StudentRepository studentRepository;
     private final FacultyRepository facultyRepository;
     private final DepartmentRepository departmentRepository;
+    private static final Logger logger = LoggerFactory.getLogger(StudentOperations.class);
 
     public StudentOperations(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository) {
         this.studentRepository = studentRepository;
@@ -262,6 +265,7 @@ public class StudentOperations {
                 selectedDepartment);
 
         studentRepository.add(newStudent);
+        logger.info("New student '{}' was added successfully", newStudent.getFullName());
 
         System.out.println("\nСтудента успішно додано!");
         System.out.println("\n---Інформація про створеного студента---");
@@ -292,6 +296,7 @@ public class StudentOperations {
         }
 
         boolean deleted = false;
+        String targetStudentName = "";
 
         switch (choice) {
             case 1:
@@ -299,7 +304,11 @@ public class StudentOperations {
                 System.out.print("Введіть ID студента (число): ");
                 try {
                     int id = Integer.parseInt(scanner.nextLine().trim());
-                    deleted = studentRepository.deleteById(id);
+                    Optional<Student> studentOpt = studentRepository.findById(id);
+                    if (studentOpt.isPresent()) {
+                        targetStudentName = studentOpt.get().getFullName();
+                        deleted = studentRepository.deleteById(id);
+                    }
                 } catch (NumberFormatException e) {
                     System.err.println("Невірний формат ID!");
                     return;
@@ -338,6 +347,7 @@ public class StudentOperations {
                 } while (inputValidator.checkWord(lastName).equals("-1"));
 
                 String[] fullName = {firstName, middleName, lastName};
+                targetStudentName = firstName + " " + middleName + " " + lastName;
                 deleted = studentRepository.deleteByFullName(fullName);
                 break;
 
@@ -348,6 +358,7 @@ public class StudentOperations {
 
         if (deleted) {
             System.out.println("Студента успішно видалено!");
+            logger.info("Student '{}' was deleted successfully", targetStudentName);
         } else {
             System.err.println("Студента не знайдено!");
         }
@@ -736,6 +747,7 @@ public class StudentOperations {
 
         if (updated) {
             System.out.println("\nСтудента успішно оновлено!");
+            logger.info("Student '{}' information was updated successfully", currentStudent.getFullName());
         } else {
             System.err.println("\nНе вдалося оновити студента!");
         }

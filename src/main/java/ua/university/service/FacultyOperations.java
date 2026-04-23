@@ -1,5 +1,7 @@
 package ua.university.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.university.repository.*;
 import ua.university.domain.*;
 
@@ -11,6 +13,7 @@ public class FacultyOperations {
     private final InputValidator inputValidator = new InputValidator();
     private final FacultyRepository facultyRepository;
     private final TeacherRepository teacherRepository;
+    private static final Logger logger = LoggerFactory.getLogger(FacultyOperations.class);
 
     public FacultyOperations(FacultyRepository facultyRepository, TeacherRepository teacherRepository) {
         this.facultyRepository = facultyRepository;
@@ -116,6 +119,7 @@ public class FacultyOperations {
 
         Faculty newFaculty = new Faculty(code, name, shortName, selectedDean, contacts);
         facultyRepository.add(newFaculty);
+        logger.info("New faculty '{}' was added successfully", newFaculty.getName());
 
         System.out.println("Факультет успішно додано до НаУКМА!");
         if (selectedDean != null) {
@@ -155,10 +159,17 @@ public class FacultyOperations {
             return;
         }
 
+        String facultyName = faculties.stream()
+                .filter(d -> d.getCode() == code)
+                .map(Faculty::getName)
+                .findFirst()
+                .orElse("Не знайдено");
+
         boolean deleted = facultyRepository.deleteById(code);
 
         if (deleted) {
             System.out.println("Факультет успішно видалено!");
+            logger.info("Faculty '{}' was deleted successfully", facultyName);
         } else {
             System.err.println("Факультет не знайдено!");
         }
@@ -313,6 +324,7 @@ public class FacultyOperations {
 
         if (updated) {
             System.out.println("Факультет успішно оновлено!");
+            logger.info("Faculty '{}' information was updated successfully", currentFaculty.getName());
             if (newDean != null) {
                 System.out.println("   Декан: " + newDean.getFullName());
             }

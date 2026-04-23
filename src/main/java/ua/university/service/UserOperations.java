@@ -1,5 +1,7 @@
 package ua.university.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.university.domain.User;
 import ua.university.exceptions.EmptyInputException;
 import ua.university.exceptions.UnsupportedIntegerInputException;
@@ -10,7 +12,7 @@ import java.util.Scanner;
 public class UserOperations {
     /** Adds scanner to the class */
     private final Scanner scanner = new Scanner(System.in);
-
+    private static final Logger logger = LoggerFactory.getLogger(UserOperations.class);
     private final UserRepository userRepository;
 
     public UserOperations(UserRepository userRepository) {
@@ -21,8 +23,10 @@ public class UserOperations {
      * Adds user by reading login, password, and access level. Does not add user with the same login name
      */
     public void addUser() {
-        if (userRepository.add(new User(readNotEmpty("Введіть логін: "), readNotEmpty("Введіть пароль: "), setAccessLevel())))
+        if (userRepository.add(new User(readNotEmpty("Введіть логін: "), readNotEmpty("Введіть пароль: "), setAccessLevel()))) {
             System.out.println("\nКористувача успішно додано");
+            logger.info("New user was added");
+        }
         else System.out.println("""
                 
                 Користувача не додано

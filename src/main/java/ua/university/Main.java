@@ -1,8 +1,11 @@
 package ua.university;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.university.exceptions.FileUpdateFailedException;
 import ua.university.exceptions.InitializationFailedException;
 import ua.university.repository.*;
 import ua.university.service.IOOperations;
+import ua.university.service.TransferOperations;
 import ua.university.ui.InputProcessor;
 
 import java.io.IOException;
@@ -16,6 +19,7 @@ public class Main {
     private static final StudentRepository studentRepository = new StudentRepository();
     private static final TeacherRepository teacherRepository = new TeacherRepository();
     private static final UserRepository userRepository = new UserRepository();
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static final InputProcessor inputProcessor = new InputProcessor(studentRepository, universityRepository, facultyRepository, departmentRepository, teacherRepository, userRepository);
 
@@ -39,11 +43,14 @@ public class Main {
         try {
             Initializer.initializeAll(studentRepository, facultyRepository, departmentRepository, teacherRepository, userRepository, Path.of("src", "main", "resources", "data"));
             System.out.println("Ініціалізація успішна\n\n\n");
+            logger.info("Repository initialization succeeded");
         } catch (IOException ex) {
             System.out.println("Не вдалося ініціалізувати репозиторії\nЗавершення програми");
+            logger.error("Repository initialization failed");
             return;
         } catch (InitializationFailedException ex) {
             System.out.println("Не вдалося ініціалізувати репозиторії: " + ex.getMessage() + "\n Завершення програми");
+            logger.error("Repository initialization failed: {}", ex.getMessage());
         }
 
         System.out.println();
@@ -62,6 +69,7 @@ public class Main {
             ioOperations.removeRunning();
         } catch (IOException | FileUpdateFailedException ex) {
             System.out.println("Помилка внесення змін\nВихід без збереження");
+            logger.error("Data saving error");
         }
     }
 }

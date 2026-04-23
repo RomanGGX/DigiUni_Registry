@@ -1,5 +1,7 @@
 package ua.university.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.university.domain.Department;
 import ua.university.domain.Faculty;
 import ua.university.domain.Teacher;
@@ -13,6 +15,7 @@ public class DepartmentOperations {
     private final FacultyRepository facultyRepository;
     private final DepartmentRepository departmentRepository;
     private final TeacherRepository teacherRepository;
+    private static final Logger logger = LoggerFactory.getLogger(DepartmentOperations.class);
 
     public DepartmentOperations(FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository) {
         this.facultyRepository = facultyRepository;
@@ -159,6 +162,7 @@ public class DepartmentOperations {
 
         Department newDepartment = new Department(code, name, selectedFaculty, selectedHead, cabinet);
         departmentRepository.add(newDepartment);
+        logger.info("New department '{}' was added successfully", newDepartment.getName());
 
         System.out.println("Кафедру успішно додано до факультету " + selectedFaculty.getShortName() + "!");
         if (selectedHead != null) {
@@ -200,10 +204,17 @@ public class DepartmentOperations {
             return;
         }
 
+        String departmentName = departments.stream()
+                .filter(d -> d.getCode() == code)
+                .map(Department::getName)
+                .findFirst()
+                .orElse("Не знайдено");
+
         boolean deleted = departmentRepository.deleteById(code);
 
         if (deleted) {
             System.out.println("Кафедру успішно видалено!");
+            logger.info("Department '{}' was deleted successfully", departmentName);
         } else {
             System.err.println("Кафедру не знайдено!");
         }
@@ -392,6 +403,7 @@ public class DepartmentOperations {
 
         if (updated) {
             System.out.println("Кафедру успішно оновлено!");
+            logger.info("Department '{}' information was updated successfully", currentDepartment.getName());
             if (newHead != null) {
                 System.out.println("   Завідувач: " + newHead.getFullName());
             }

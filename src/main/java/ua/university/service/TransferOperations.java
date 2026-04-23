@@ -1,5 +1,7 @@
 package ua.university.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.university.domain.*;
 import ua.university.repository.*;
 
@@ -13,6 +15,7 @@ public class TransferOperations {
     private final DepartmentRepository departmentRepository;
     private final InputValidator inputValidator;
     private final Scanner scanner = new Scanner(System.in);
+    private static final Logger logger = LoggerFactory.getLogger(TransferOperations.class);
 
     public TransferOperations(StudentRepository studentRepository,
                               UniversityRepository universityRepository,
@@ -217,6 +220,8 @@ public class TransferOperations {
             System.out.println("\n Студента " + currentStudent.getFullName() + " успішно переведено!");
             System.out.println("   На кафедру: " + selectedDepartment.getName());
             System.out.println("   Факультет: " + selectedFaculty.getShortName());
+            logger.info("Student '{}' was transferred to '{}' of '{}'", currentStudent.getFullName(),
+                    selectedDepartment.getName(), selectedFaculty.getName());
         } else {
             System.err.println("\nПомилка при переведенні!");
         }
@@ -373,6 +378,8 @@ public class TransferOperations {
             System.out.println("\n Студента " + currentStudent.getFullName() + " успішно переведено!");
             System.out.println("   На курс: " + newCourse);
             System.out.println("   У групу: " + newGroup);
+            logger.info("Student '{}' was transferred to course '{}' and group '{}'", currentStudent.getFullName(),
+                    newCourse, newGroup);
         } else {
             System.err.println("\nПомилка при переведенні!");
         }

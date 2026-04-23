@@ -2,6 +2,9 @@ package ua.university.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ua.university.Main;
 import ua.university.domain.*;
 import ua.university.exceptions.InitializationFailedException;
 
@@ -10,6 +13,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Initializer {
+    private static final Logger logger = LoggerFactory.getLogger(Initializer.class);
 
     /** Initializes all repositories */
     public static void initializeAll(StudentRepository studentRepository, FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository, UserRepository userRepository, Path dataPath) throws IOException, InitializationFailedException {
@@ -19,6 +23,7 @@ public class Initializer {
             try {
                 initializeFaculties(mapper, dataPath, facultyRepository);
             } catch (IOException e) {
+                logger.error("Failed to initialize faculties");
                 throw new InitializationFailedException("Failed to initialize faculties", e);
             }
         }, "Faculties load");
@@ -26,6 +31,7 @@ public class Initializer {
             try {
                 initializeDepartments(mapper, dataPath, departmentRepository);
             } catch (IOException e) {
+                logger.error("Failed to initialize departments");
                 throw new InitializationFailedException("Failed to initialize departments", e);
             }
         }, "Departments load");
@@ -33,6 +39,7 @@ public class Initializer {
             try {
                 initializeStudents(mapper, dataPath, studentRepository);
             } catch (IOException e) {
+                logger.error("Failed to initialize students");
                 throw new InitializationFailedException("Failed to initialize students", e);
             }
         }, "Students load");
@@ -40,6 +47,7 @@ public class Initializer {
             try {
                 initializeTeachers(mapper, dataPath, teacherRepository);
             } catch (IOException e) {
+                logger.error("Failed to initialize teachers");
                 throw new InitializationFailedException("Failed to initialize teachers", e);
             }
         }, "Teachers load");
@@ -55,6 +63,7 @@ public class Initializer {
             studentsThread.join();
             teachersThread.join();
         } catch (InterruptedException e) {
+            logger.error("Threads interrupted in initialization");
             throw new IOException("Threads interrupted in initialization", e);
         }
 

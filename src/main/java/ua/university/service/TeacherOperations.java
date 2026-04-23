@@ -1,5 +1,7 @@
 package ua.university.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ua.university.domain.Department;
 import ua.university.domain.Faculty;
 import ua.university.domain.Teacher;
@@ -13,6 +15,7 @@ public class TeacherOperations {
     private final FacultyRepository facultyRepository;
     private final DepartmentRepository departmentRepository;
     private final TeacherRepository teacherRepository;
+    private static final Logger logger = LoggerFactory.getLogger(TeacherOperations.class);
 
     public TeacherOperations(FacultyRepository facultyRepository, DepartmentRepository departmentRepository, TeacherRepository teacherRepository) {
         this.facultyRepository = facultyRepository;
@@ -260,6 +263,7 @@ public class TeacherOperations {
                 employmentDate, workload);
 
         teacherRepository.add(newTeacher);
+        logger.info("New Teacher '{}' was added successfully", newTeacher.getFullName());
 
         System.out.println("\nВикладача успішно додано!");
         System.out.println("\n---Інформація про створеного викладача---");
@@ -343,6 +347,7 @@ public class TeacherOperations {
         boolean deleted = teacherRepository.deleteById(teacher.getId());
         if (deleted) {
             System.out.println("Викладача " + teacher.getFullName() + " успішно видалено!");
+            logger.info("Teacher '{}' was deleted successfully", teacher.getFullName());
         } else {
             System.err.println("Помилка при видаленні!");
         }
@@ -681,6 +686,7 @@ public class TeacherOperations {
 
         if (updated) {
             System.out.println("\nВикладача успішно оновлено!");
+            logger.info("Teacher '{}' information was updated successfully", currentTeacher.getFullName());
         } else {
             System.err.println("\nПомилка при оновленні!");
         }
