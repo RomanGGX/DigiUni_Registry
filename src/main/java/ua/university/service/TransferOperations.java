@@ -51,18 +51,24 @@ public class TransferOperations {
                     " (" + facultyName + ", " + deptName + ")");
         }
 
-        System.out.println("\nОберіть метод пошуку студента:");
-        System.out.println("1. По ID");
-        System.out.println("2. По повному імені");
-        System.out.println("3. По student ID");
-        System.out.print("Ваш вибір (1-3): ");
-
         int choice = 0;
-        try {
-            choice = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.err.println("Невірний формат!");
-            return;
+        while (true) {
+            System.out.println("\nОберіть метод видалення:");
+            System.out.println("1. По ID (число)");
+            System.out.println("2. По повному імені");
+            System.out.println("3. По student ID");
+            System.out.print("Введіть вибір (1 - 3): ");
+
+            try {
+                choice = Integer.parseInt(scanner.nextLine().trim());
+                if (choice == 1 || choice == 2 || choice == 3) {
+                    break;
+                } else {
+                    System.out.println("Помилка: потрібно ввести саме 1, 2 або 3.");
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Помилка: потрібно ввести число.");
+            }
         }
 
         Student currentStudent = null;
@@ -105,10 +111,6 @@ public class TransferOperations {
                     currentStudent = studentOptById.get();
                 }
                 break;
-
-            default:
-                System.err.println("Невірний вибір!");
-                return;
         }
 
         if (currentStudent == null) {
@@ -251,18 +253,24 @@ public class TransferOperations {
                     " (" + facultyName + ", " + deptName + ")");
         }
 
-        System.out.println("\nОберіть метод пошуку студента:");
-        System.out.println("1. По ID");
-        System.out.println("2. По повному імені");
-        System.out.println("3. По student ID");
-        System.out.print("Ваш вибір (1-3): ");
-
         int choice = 0;
-        try {
-            choice = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.err.println("Невірний формат!");
-            return;
+        while (true) {
+            System.out.println("\nОберіть метод видалення:");
+            System.out.println("1. По ID (число)");
+            System.out.println("2. По повному імені");
+            System.out.println("3. По student ID");
+            System.out.print("Введіть вибір (1 - 3): ");
+
+            try {
+                choice = Integer.parseInt(scanner.nextLine().trim());
+                if (choice == 1 || choice == 2 || choice == 3) {
+                    break;
+                } else {
+                    System.out.println("Помилка: потрібно ввести саме 1, 2 або 3.");
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Помилка: потрібно ввести число.");
+            }
         }
 
         Student currentStudent = null;
@@ -305,10 +313,6 @@ public class TransferOperations {
                     currentStudent = studentOptById.get();
                 }
                 break;
-
-            default:
-                System.err.println("Невірний вибір!");
-                return;
         }
 
         if (currentStudent == null) {

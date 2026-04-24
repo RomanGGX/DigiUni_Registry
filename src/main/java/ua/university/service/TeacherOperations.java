@@ -291,17 +291,23 @@ public class TeacherOperations {
                     " (" + facultyName + ")");
         }
 
-        System.out.println("\nОберіть метод пошуку:");
-        System.out.println("1. По ID");
-        System.out.println("2. По повному імені");
-        System.out.print("Ваш вибір (1 або 2): ");
-
         int choice = 0;
-        try {
-            choice = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.err.println("Невірний формат!");
-            return;
+        while (true) {
+            System.out.println("\nОберіть метод видалення:");
+            System.out.println("1. По ID (число)");
+            System.out.println("2. По повному імені");
+            System.out.print("Введіть вибір (1 або 2): ");
+
+            try {
+                choice = Integer.parseInt(scanner.nextLine().trim());
+                if (choice == 1 || choice == 2) {
+                    break;
+                } else {
+                    System.out.println("Помилка: потрібно ввести саме 1 або 2.");
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("ПОмилка: потрібно ввести число.");
+            }
         }
 
         Teacher teacher = null;
@@ -335,10 +341,6 @@ public class TeacherOperations {
                     teacher = teacherOpt.get();
                 }
                 break;
-
-            default:
-                System.err.println("Невірний вибір!");
-                return;
         }
 
         if (teacher == null) {
@@ -361,17 +363,23 @@ public class TeacherOperations {
         List<Teacher> allTeachers = teacherRepository.findAll();
         showTeachers(allTeachers);
 
-        System.out.println("\nОберіть метод пошуку:");
-        System.out.println("1. По ID");
-        System.out.println("2. По повному імені");
-        System.out.print("Ваш вибір (1 або 2): ");
-
         int choice = 0;
-        try {
-            choice = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.err.println("Невірний формат!");
-            return;
+        while (true) {
+            System.out.println("\nОберіть метод видалення:");
+            System.out.println("1. По ID (число)");
+            System.out.println("2. По повному імені");
+            System.out.print("Введіть вибір (1 або 2): ");
+
+            try {
+                choice = Integer.parseInt(scanner.nextLine().trim());
+                if (choice == 1 || choice == 2) {
+                    break;
+                } else {
+                    System.out.println("Помилка: потрібно ввести саме 1 або 2.");
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("ПОмилка: потрібно ввести число.");
+            }
         }
 
         Teacher currentTeacher = null;
@@ -405,10 +413,6 @@ public class TeacherOperations {
                     currentTeacher = teacherOpt.get();
                 }
                 break;
-
-            default:
-                System.err.println("Невірний вибір!");
-                return;
         }
 
         if (currentTeacher == null) {
